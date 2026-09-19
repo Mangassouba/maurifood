@@ -1,0 +1,8 @@
+export const STATUS_LABELS = {
+  pending: 'En attente',
+  confirmed: 'Confirmée',
+  preparing: 'En préparation',
+  out_for_delivery: 'En livraison',
+  delivered: 'Livrée',
+  cancelled: 'Annulée',
+}
