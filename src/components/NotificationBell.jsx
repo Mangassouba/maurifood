@@ -65,7 +65,7 @@ export default function NotificationBell() {
                 <p className="font-medium">{n.message}</p>
                 <div className="mt-1.5 flex items-center justify-between">
                   <Link
-                    to="/admin"
+                    to="/admin/restaurants"
                     onClick={() => setOpen(false)}
                     className="text-xs font-semibold text-brand-600 hover:underline"
                   >

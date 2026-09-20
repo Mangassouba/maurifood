@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
 import AdminLayout from './pages/admin/AdminLayout'
+import AdminHome from './pages/admin/AdminHome'
 import RestaurantsPage from './pages/admin/RestaurantsPage'
 import ActivityLogPage from './pages/admin/ActivityLogPage'
 import DashboardLayout from './pages/dashboard/DashboardLayout'
@@ -70,7 +71,8 @@ function App() {
           {/* Super admin */}
           <Route element={<ProtectedRoute allowedRoles={['super_admin']} />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<RestaurantsPage />} />
+              <Route index element={<AdminHome />} />
+              <Route path="restaurants" element={<RestaurantsPage />} />
               <Route path="activite" element={<ActivityLogPage />} />
             </Route>
           </Route>
