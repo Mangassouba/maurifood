@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { MapPin, Phone } from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
@@ -51,8 +52,16 @@ export default function RestaurantPage() {
           )}
           {(restaurant.address || restaurant.phone) && (
             <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/60">
-              {restaurant.address && <span>📍 {restaurant.address}</span>}
-              {restaurant.phone && <span>📞 {restaurant.phone}</span>}
+              {restaurant.address && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5" /> {restaurant.address}
+                </span>
+              )}
+              {restaurant.phone && (
+                <span className="flex items-center gap-1">
+                  <Phone className="h-3.5 w-3.5" /> {restaurant.phone}
+                </span>
+              )}
             </p>
           )}
         </div>

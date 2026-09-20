@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CreditCard } from 'lucide-react'
 import api from '../../api/client'
 import { badgeClass, btnPrimary, cardClass } from '../../styles/ui'
 
@@ -53,8 +54,8 @@ export default function SubscriptionPage() {
       <div>
         {subscription ? (
           <div className={`${cardClass} flex items-center gap-4`}>
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-2xl">
-              💳
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100">
+              <CreditCard className="h-6 w-6 text-brand-700" />
             </span>
             <div>
               <p className="font-bold text-ink-900">Plan actuel : {subscription.plan?.name}</p>

@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import api from '../../api/client'
+import Modal from '../../components/Modal'
+import Pagination from '../../components/Pagination'
 import { badgeClass, btnDark, btnDanger, btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 
 const EMPTY_FORM = { name: '', description: '', price: '', categoryId: '', imageUrl: '' }
+const PAGE_SIZE = 8
 
 export default function DishesPage() {
   const [dishes, setDishes] = useState([])
@@ -11,6 +14,11 @@ export default function DishesPage() {
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
+
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+  const [availabilityFilter, setAvailabilityFilter] = useState('all')
+  const [page, setPage] = useState(1)
 
   function loadDishes() {
     api
@@ -30,6 +38,21 @@ export default function DishesPage() {
     loadDishes()
     loadCategories()
   }, [])
+
+  const filteredDishes = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    return dishes.filter((dish) => {
+      if (term && !dish.name.toLowerCase().includes(term)) return false
+      if (categoryFilter !== 'all' && String(dish.categoryId ?? '') !== categoryFilter) return false
+      if (availabilityFilter === 'available' && !dish.isAvailable) return false
+      if (availabilityFilter === 'unavailable' && dish.isAvailable) return false
+      return true
+    })
+  }, [dishes, search, categoryFilter, availabilityFilter])
+
+  const pageCount = Math.max(1, Math.ceil(filteredDishes.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedDishes = filteredDishes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   function openCreate() {
     setEditingId(null)
@@ -84,14 +107,52 @@ export default function DishesPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <input
+            placeholder="Rechercher un plat..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+            className={`${inputClass} w-40 shrink-0 sm:w-64`}
+          />
+          <select
+            value={categoryFilter}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value)
+              setPage(1)
+            }}
+            className={`${inputClass} w-36 shrink-0`}
+          >
+            <option value="all">Toutes les catégories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={String(c.id)}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={availabilityFilter}
+            onChange={(e) => {
+              setAvailabilityFilter(e.target.value)
+              setPage(1)
+            }}
+            className={`${inputClass} w-36 shrink-0`}
+          >
+            <option value="all">Toutes disponibilités</option>
+            <option value="available">Disponible</option>
+            <option value="unavailable">Indisponible</option>
+          </select>
+        </div>
         <button type="button" onClick={openCreate} className={btnPrimary}>
           Nouveau plat
         </button>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className={`${cardClass} mb-6 flex flex-col gap-3`}>
+      <Modal open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Modifier le plat' : 'Nouveau plat'}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             placeholder="Nom du plat"
             value={form.name}
@@ -155,7 +216,7 @@ export default function DishesPage() {
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
       <div className={`${cardClass} overflow-x-auto p-0`}>
         <table className="w-full text-left text-sm">
@@ -168,7 +229,7 @@ export default function DishesPage() {
             </tr>
           </thead>
           <tbody>
-            {dishes.map((dish) => (
+            {pagedDishes.map((dish) => (
               <tr key={dish.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/50">
                 <td className="px-4 py-3 font-semibold text-ink-900">{dish.name}</td>
                 <td className="px-4 py-3 text-ink-600">{dish.price} MRU</td>
@@ -197,7 +258,10 @@ export default function DishesPage() {
             ))}
           </tbody>
         </table>
-        {dishes.length === 0 && <p className="px-4 py-6 text-ink-400">Aucun plat pour le moment.</p>}
+        {filteredDishes.length === 0 && (
+          <p className="px-4 py-6 text-ink-400">Aucun plat ne correspond à votre recherche.</p>
+        )}
+        <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredDishes.length} />
       </div>
     </div>
   )

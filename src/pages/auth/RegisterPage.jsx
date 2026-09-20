@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Check } from 'lucide-react'
 import api from '../../api/client'
 import { btnPrimary, cardClass, inputClass } from '../../styles/ui'
 
@@ -32,8 +33,8 @@ export default function RegisterPage() {
   if (done) {
     return (
       <div className="mx-auto max-w-sm px-4 py-16 text-center sm:px-6">
-        <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-2xl">
-          ✓
+        <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-100">
+          <Check className="h-7 w-7 text-brand-700" />
         </span>
         <h1 className="mb-2 text-xl font-extrabold text-ink-900">Demande envoyée</h1>
         <p className="text-sm text-ink-500">

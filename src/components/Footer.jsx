@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { UtensilsCrossed } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -6,8 +7,8 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 sm:py-12 md:flex-row md:justify-between">
         <div className="max-w-xs">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-lg">
-              🍔
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
+              <UtensilsCrossed className="h-5 w-5 text-ink-900" />
             </span>
             <span className="text-lg font-extrabold tracking-tight">MauriFood</span>
           </Link>

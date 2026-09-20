@@ -1,27 +1,45 @@
 import { useEffect, useMemo, useState } from 'react'
+import {
+  Ban,
+  Bell,
+  CheckCircle2,
+  CreditCard,
+  Clock,
+  LogIn,
+  LogOut,
+  Pencil,
+  Plus,
+  Sparkles,
+  Trash2,
+  UserPlus,
+  Dot,
+} from 'lucide-react'
 import api from '../../api/client'
+import Pagination from '../../components/Pagination'
 import { cardClass, inputClass } from '../../styles/ui'
 
+const PAGE_SIZE = 15
+
 const ACTION_ICONS = {
-  'restaurant.registered': '🆕',
-  'restaurant.activated': '✅',
-  'restaurant.deactivated': '⛔',
-  'restaurant.profile_updated': '✏️',
-  'subscription.updated': '💳',
-  'subscription.expired': '⏰',
-  'renewal.requested': '🔔',
-  'auth.login': '🔓',
-  'auth.logout': '🔒',
-  'dish.created': '➕',
-  'dish.updated': '✏️',
-  'dish.deleted': '🗑️',
-  'category.created': '➕',
-  'category.deleted': '🗑️',
-  'delivery_zone.created': '➕',
-  'delivery_zone.updated': '✏️',
-  'delivery_zone.deleted': '🗑️',
-  'staff.created': '👤',
-  'staff.deleted': '🗑️',
+  'restaurant.registered': Sparkles,
+  'restaurant.activated': CheckCircle2,
+  'restaurant.deactivated': Ban,
+  'restaurant.profile_updated': Pencil,
+  'subscription.updated': CreditCard,
+  'subscription.expired': Clock,
+  'renewal.requested': Bell,
+  'auth.login': LogIn,
+  'auth.logout': LogOut,
+  'dish.created': Plus,
+  'dish.updated': Pencil,
+  'dish.deleted': Trash2,
+  'category.created': Plus,
+  'category.deleted': Trash2,
+  'delivery_zone.created': Plus,
+  'delivery_zone.updated': Pencil,
+  'delivery_zone.deleted': Trash2,
+  'staff.created': UserPlus,
+  'staff.deleted': Trash2,
 }
 
 const FILTERS = [
@@ -52,6 +70,8 @@ export default function ActivityLogPage() {
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     api
@@ -62,9 +82,20 @@ export default function ActivityLogPage() {
   }, [])
 
   const filteredLogs = useMemo(() => {
-    if (filter === 'all') return logs
-    return logs.filter((log) => log.action.startsWith(filter))
-  }, [logs, filter])
+    const term = search.trim().toLowerCase()
+    return logs.filter((log) => {
+      if (filter !== 'all' && !log.action.startsWith(filter)) return false
+      if (term) {
+        const haystack = `${log.message} ${log.restaurant?.name ?? ''}`.toLowerCase()
+        if (!haystack.includes(term)) return false
+      }
+      return true
+    })
+  }, [logs, filter, search])
+
+  const pageCount = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedLogs = filteredLogs.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   return (
     <div>
@@ -74,28 +105,44 @@ export default function ActivityLogPage() {
         (100 derniers événements).
       </p>
 
-      <select
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        className={`${inputClass} mb-6 w-auto`}
-      >
-        {FILTERS.map((f) => (
-          <option key={f.value} value={f.value}>
-            {f.label}
-          </option>
-        ))}
-      </select>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <input
+          placeholder="Rechercher dans le journal..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
+          className={`${inputClass} w-48 shrink-0 sm:w-72`}
+        />
+        <select
+          value={filter}
+          onChange={(e) => {
+            setFilter(e.target.value)
+            setPage(1)
+          }}
+          className={`${inputClass} w-36 shrink-0`}
+        >
+          {FILTERS.map((f) => (
+            <option key={f.value} value={f.value}>
+              {f.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {loading && <p className="text-ink-400">Chargement...</p>}
       {!loading && filteredLogs.length === 0 && (
-        <p className="text-ink-400">Aucune activité pour le moment.</p>
+        <p className="text-ink-400">Aucune activité ne correspond à votre recherche.</p>
       )}
 
       <div className={`${cardClass} divide-y divide-ink-50 p-0`}>
-        {filteredLogs.map((log) => (
+        {pagedLogs.map((log) => {
+          const Icon = ACTION_ICONS[log.action] ?? Dot
+          return (
           <div key={log.id} className="flex items-start gap-3 px-4 py-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-lg">
-              {ACTION_ICONS[log.action] ?? '•'}
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50">
+              <Icon className="h-4 w-4 text-brand-700" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-sm text-ink-900">{log.message}</p>
@@ -110,7 +157,9 @@ export default function ActivityLogPage() {
               </div>
             </div>
           </div>
-        ))}
+          )
+        })}
+        <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredLogs.length} />
       </div>
     </div>
   )

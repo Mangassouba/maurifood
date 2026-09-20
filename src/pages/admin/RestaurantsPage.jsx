@@ -1,14 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import api from '../../api/client'
+import Modal from '../../components/Modal'
+import Pagination from '../../components/Pagination'
 import { badgeClass, btnDark, btnGhost, cardClass, inputClass } from '../../styles/ui'
 
 const STATUS_OPTIONS = ['trialing', 'active', 'past_due', 'cancelled']
+const PAGE_SIZE = 8
 
 export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState([])
   const [plans, setPlans] = useState([])
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState({ planId: '', status: 'active' })
+
+  const [search, setSearch] = useState('')
+  const [activeFilter, setActiveFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [page, setPage] = useState(1)
 
   function load() {
     api
@@ -51,10 +59,68 @@ export default function RestaurantsPage() {
     load()
   }
 
+  const filteredRestaurants = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    return restaurants.filter((r) => {
+      if (term && !r.name.toLowerCase().includes(term)) return false
+      if (activeFilter === 'active' && !r.isActive) return false
+      if (activeFilter === 'inactive' && r.isActive) return false
+      if (statusFilter !== 'all' && r.subscription?.status !== statusFilter) return false
+      return true
+    })
+  }, [restaurants, search, activeFilter, statusFilter])
+
+  const pageCount = Math.max(1, Math.ceil(filteredRestaurants.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedRestaurants = filteredRestaurants.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  )
+  const editingRestaurant = restaurants.find((r) => r.id === editingId)
+
   return (
     <div>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <input
+          placeholder="Rechercher un restaurant..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
+          className={`${inputClass} w-40 shrink-0 sm:w-64`}
+        />
+        <select
+          value={activeFilter}
+          onChange={(e) => {
+            setActiveFilter(e.target.value)
+            setPage(1)
+          }}
+          className={`${inputClass} w-36 shrink-0`}
+        >
+          <option value="all">Actif et inactif</option>
+          <option value="active">Actif</option>
+          <option value="inactive">Inactif</option>
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value)
+            setPage(1)
+          }}
+          className={`${inputClass} w-36 shrink-0`}
+        >
+          <option value="all">Tous les abonnements</option>
+          {STATUS_OPTIONS.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="flex flex-col gap-3">
-        {restaurants.map((r) => (
+        {pagedRestaurants.map((r) => (
           <div key={r.id} className={cardClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -82,49 +148,62 @@ export default function RestaurantsPage() {
                 </button>
               </div>
             </div>
-
-            {editingId === r.id && (
-              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-ink-100 pt-3">
-                <select
-                  value={form.planId}
-                  onChange={(e) => setForm((f) => ({ ...f, planId: e.target.value }))}
-                  className={`${inputClass} w-auto`}
-                >
-                  {plans.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} — {p.price} MRU
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={form.status}
-                  onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                  className={`${inputClass} w-auto`}
-                >
-                  {STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-                <button type="button" onClick={() => saveSubscription(r.id)} className={btnDark}>
-                  Enregistrer
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingId(null)}
-                  className="text-sm text-ink-500"
-                >
-                  Annuler
-                </button>
-              </div>
-            )}
           </div>
         ))}
-        {restaurants.length === 0 && (
-          <p className="text-ink-400">Aucun restaurant pour le moment.</p>
+        {filteredRestaurants.length === 0 && (
+          <p className="text-ink-400">Aucun restaurant ne correspond à votre recherche.</p>
         )}
       </div>
+
+      {pageCount > 1 && (
+        <div className={`${cardClass} mt-3 p-0`}>
+          <Pagination
+            page={currentPage}
+            pageCount={pageCount}
+            onPageChange={setPage}
+            total={filteredRestaurants.length}
+          />
+        </div>
+      )}
+
+      <Modal
+        open={Boolean(editingRestaurant)}
+        onClose={() => setEditingId(null)}
+        title={editingRestaurant ? `Abonnement — ${editingRestaurant.name}` : ''}
+      >
+        <div className="flex flex-col gap-3">
+          <select
+            value={form.planId}
+            onChange={(e) => setForm((f) => ({ ...f, planId: e.target.value }))}
+            className={inputClass}
+          >
+            {plans.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} — {p.price} MRU
+              </option>
+            ))}
+          </select>
+          <select
+            value={form.status}
+            onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+            className={inputClass}
+          >
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <div className="flex items-center gap-3 pt-1">
+            <button type="button" onClick={() => saveSubscription(editingId)} className={btnDark}>
+              Enregistrer
+            </button>
+            <button type="button" onClick={() => setEditingId(null)} className="text-sm text-ink-500">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

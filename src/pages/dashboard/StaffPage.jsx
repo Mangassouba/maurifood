@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import api from '../../api/client'
+import Modal from '../../components/Modal'
+import Pagination from '../../components/Pagination'
 import { badgeClass, btnDanger, btnDark, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 
 const EMPTY_FORM = { name: '', email: '', password: '' }
+const PAGE_SIZE = 8
 
 export default function StaffPage() {
   const [staff, setStaff] = useState([])
@@ -10,6 +13,8 @@ export default function StaffPage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
 
   function load() {
     api
@@ -46,17 +51,48 @@ export default function StaffPage() {
     load()
   }
 
+  const filteredStaff = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return staff
+    return staff.filter((member) =>
+      `${member.name ?? ''} ${member.email}`.toLowerCase().includes(term),
+    )
+  }, [staff, search])
+
+  const pageCount = Math.max(1, Math.ceil(filteredStaff.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedStaff = filteredStaff.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold text-ink-900">Équipe</h1>
-        <button type="button" onClick={() => setShowForm((v) => !v)} className={btnPrimary}>
-          Nouvel utilisateur
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            placeholder="Rechercher un membre..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+            className={`${inputClass} w-56`}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setForm(EMPTY_FORM)
+              setError('')
+              setShowForm(true)
+            }}
+            className={btnPrimary}
+          >
+            Nouvel utilisateur
+          </button>
+        </div>
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className={`${cardClass} mb-6 flex flex-col gap-3`}>
+      <Modal open={showForm} onClose={() => setShowForm(false)} title="Nouvel utilisateur">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             placeholder="Nom"
             value={form.name}
@@ -90,7 +126,7 @@ export default function StaffPage() {
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
       <div className={`${cardClass} overflow-x-auto p-0`}>
         <table className="w-full text-left text-sm">
@@ -103,7 +139,7 @@ export default function StaffPage() {
             </tr>
           </thead>
           <tbody>
-            {staff.map((member) => (
+            {pagedStaff.map((member) => (
               <tr key={member.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/50">
                 <td className="px-4 py-3 font-semibold text-ink-900">{member.name || '-'}</td>
                 <td className="px-4 py-3 text-ink-600">{member.email}</td>
@@ -119,9 +155,10 @@ export default function StaffPage() {
             ))}
           </tbody>
         </table>
-        {staff.length === 0 && (
-          <p className="px-4 py-6 text-ink-400">Aucun membre d'équipe pour le moment.</p>
+        {filteredStaff.length === 0 && (
+          <p className="px-4 py-6 text-ink-400">Aucun membre d'équipe ne correspond à votre recherche.</p>
         )}
+        <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredStaff.length} />
       </div>
     </div>
   )

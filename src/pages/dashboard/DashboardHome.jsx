@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Calculator, Clock, Receipt, Smile, Wallet } from 'lucide-react'
 import api from '../../api/client'
 import StatCard from '../../components/charts/StatCard'
 import RevenueTrendChart from '../../components/charts/RevenueTrendChart'
@@ -24,8 +25,8 @@ export default function DashboardHome() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-4 rounded-2xl border border-ink-100 bg-white p-6 shadow-sm">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-2xl">
-          👋
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100">
+          <Smile className="h-6 w-6 text-brand-700" />
         </span>
         <p className="text-ink-500">
           Bienvenue dans l'espace de gestion de votre restaurant. Utilisez le menu pour gérer vos
@@ -36,18 +37,18 @@ export default function DashboardHome() {
       {stats && (
         <>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatCard icon="🧾" label="Commandes totales" value={stats.summary.totalOrders} />
+            <StatCard icon={Receipt} label="Commandes totales" value={stats.summary.totalOrders} />
             <StatCard
-              icon="💰"
+              icon={Wallet}
               label="Chiffre d'affaires"
               value={formatMoney(stats.summary.totalRevenue)}
             />
             <StatCard
-              icon="🧮"
+              icon={Calculator}
               label="Panier moyen"
               value={formatMoney(stats.summary.avgOrderValue)}
             />
-            <StatCard icon="⏳" label="Commandes en cours" value={stats.summary.pendingOrders} />
+            <StatCard icon={Clock} label="Commandes en cours" value={stats.summary.pendingOrders} />
           </div>
 
           <RevenueTrendChart data={stats.revenueByDay} />

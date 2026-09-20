@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { MapPin } from 'lucide-react'
 import api from '../../api/client'
 import DishImage from '../../components/DishImage'
 import { btnDark, btnGhost, cardClass, inputClass } from '../../styles/ui'
@@ -149,9 +150,10 @@ export default function ProfilePage() {
               type="button"
               onClick={useMyLocation}
               disabled={locating}
-              className="text-xs font-semibold text-brand-600 hover:underline disabled:opacity-50"
+              className="flex items-center gap-1 text-xs font-semibold text-brand-600 hover:underline disabled:opacity-50"
             >
-              {locating ? 'Localisation...' : '📍 Utiliser ma position actuelle'}
+              <MapPin className="h-3.5 w-3.5" />
+              {locating ? 'Localisation...' : 'Utiliser ma position actuelle'}
             </button>
           </div>
           <div className="grid grid-cols-2 gap-3">

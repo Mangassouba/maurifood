@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { UtensilsCrossed } from 'lucide-react'
 
 export default function DishImage({ src, alt, className = '' }) {
   const [errored, setErrored] = useState(false)
@@ -18,9 +19,7 @@ export default function DishImage({ src, alt, className = '' }) {
     <div
       className={`flex items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200 ${className}`}
     >
-      <span className="text-3xl" role="img" aria-label={alt}>
-        🍽️
-      </span>
+      <UtensilsCrossed className="h-8 w-8 text-brand-600" aria-label={alt} />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { ShoppingCart } from 'lucide-react'
 import { useCart } from '../../context/CartContext'
 import DishImage from '../../components/DishImage'
 import QuantityStepper from '../../components/QuantityStepper'
@@ -11,8 +12,8 @@ export default function CartPage() {
   if (cart.items.length === 0) {
     return (
       <div className="mx-auto max-w-2xl px-6 py-20 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-2xl">
-          🛒
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-100">
+          <ShoppingCart className="h-7 w-7 text-brand-700" />
         </div>
         <p className="text-ink-500">Votre panier est vide.</p>
         <Link

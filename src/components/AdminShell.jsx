@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Home, LogOut, Menu, UtensilsCrossed } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from './NotificationBell'
 
@@ -27,8 +28,8 @@ export default function AdminShell({ sectionLabel, links, banner }) {
         }`}
       >
         <Link to="/" className="flex h-16 items-center gap-2 px-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-lg">
-            🍔
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
+            <UtensilsCrossed className="h-5 w-5 text-ink-900" />
           </span>
           <span className="text-lg font-extrabold tracking-tight">MauriFood</span>
         </Link>
@@ -50,7 +51,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
                 }`
               }
             >
-              <span aria-hidden="true">{link.icon}</span>
+              <link.icon className="h-5 w-5" aria-hidden="true" />
               {link.label}
             </NavLink>
           ))}
@@ -61,7 +62,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
             to="/"
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white/70 hover:bg-white/10"
           >
-            <span aria-hidden="true">🏠</span>
+            <Home className="h-5 w-5" aria-hidden="true" />
             Retour au site
           </Link>
           <button
@@ -69,7 +70,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
             onClick={logout}
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-white/70 hover:bg-white/10"
           >
-            <span aria-hidden="true">↩</span>
+            <LogOut className="h-5 w-5" aria-hidden="true" />
             Déconnexion
           </button>
         </div>
@@ -93,11 +94,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
               className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-600 hover:bg-ink-50 lg:hidden"
               aria-label="Ouvrir le menu"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
+              <Menu className="h-5 w-5" />
             </button>
             <h1 className="text-base font-bold text-ink-900 sm:text-lg">
               {activeLink?.label ?? sectionLabel}

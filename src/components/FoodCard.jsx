@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Plus } from 'lucide-react'
 import DishImage from './DishImage'
 
 export default function FoodCard({ dish, onQuickAdd }) {
@@ -21,10 +22,10 @@ export default function FoodCard({ dish, onQuickAdd }) {
             e.stopPropagation()
             onQuickAdd(dish)
           }}
-          className="absolute -bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 font-bold text-ink-900 shadow-md transition hover:bg-brand-400"
+          className="absolute -bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-ink-900 shadow-md transition hover:bg-brand-400"
           aria-label="Ajouter au panier"
         >
-          +
+          <Plus className="h-4 w-4" />
         </button>
       </div>
       <div className="flex flex-1 flex-col gap-1 px-3 pb-3 pt-4">
