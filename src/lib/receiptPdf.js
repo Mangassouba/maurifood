@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf'
-import { STATUS_LABELS } from './orderStatus'
+import { statusLabel } from './orderStatus'
 
 const MARGIN_X = 40
 const RIGHT_EDGE = 555
@@ -31,7 +31,7 @@ export function downloadReceiptPdf(order) {
     `Téléphone : ${order.guestPhone}`,
     `Type : ${order.orderType === 'delivery' ? 'Livraison' : 'À emporter'}`,
     ...(order.guestAddress ? [`Adresse : ${order.guestAddress}`] : []),
-    `Statut : ${STATUS_LABELS[order.status] ?? order.status}`,
+    `Statut : ${statusLabel(order.status, order.orderType)}`,
     `Date : ${new Date(order.createdAt).toLocaleString('fr-FR')}`,
   ]
   for (const line of infoLines) {

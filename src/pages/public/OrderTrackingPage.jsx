@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Check, Download } from 'lucide-react'
 import api from '../../api/client'
-import { STATUS_LABELS } from '../../lib/orderStatus'
+import { statusLabel } from '../../lib/orderStatus'
 import { downloadReceiptPdf } from '../../lib/receiptPdf'
 import { btnGhost, cardClass } from '../../styles/ui'
 
@@ -85,7 +85,7 @@ export default function OrderTrackingPage() {
           <div className="flex justify-between">
             <dt className="text-ink-400">Statut</dt>
             <dd className="font-medium text-brand-600">
-              {STATUS_LABELS[order.status] ?? order.status}
+              {statusLabel(order.status, order.orderType)}
             </dd>
           </div>
         </dl>

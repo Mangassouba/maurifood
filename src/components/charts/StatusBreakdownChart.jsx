@@ -1,10 +1,11 @@
 import { cardClass } from '../../styles/ui'
-import { STATUS_LABELS } from '../../lib/orderStatus'
+import { genericStatusLabel } from '../../lib/orderStatus'
 
 const STATUS_COLOR = {
   pending: '#8a8377',
   confirmed: '#f7a30f',
   preparing: '#f7a30f',
+  ready: '#f7a30f',
   out_for_delivery: '#f7a30f',
   delivered: '#22c55e',
   cancelled: '#ef4444',
@@ -24,7 +25,7 @@ export default function StatusBreakdownChart({ data }) {
         <div className="mt-4 flex flex-col gap-3">
           {data.map((d) => (
             <div key={d.status} className="flex items-center gap-3">
-              <span className="w-32 shrink-0 text-sm text-ink-600">{STATUS_LABELS[d.status]}</span>
+              <span className="w-32 shrink-0 text-sm text-ink-600">{genericStatusLabel(d.status)}</span>
               <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-ink-100">
                 <div
                   className="h-full rounded-full"
