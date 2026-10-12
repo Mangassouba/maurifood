@@ -169,14 +169,14 @@ export default function OrdersPage() {
             <h2 className="text-lg font-extrabold text-ink-900">Commandes passées via la vitrine</h2>
             <p className="text-sm text-ink-500">{filteredOrders.length} commande(s)</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-nowrap items-center gap-2">
             <select
               value={typeFilter}
               onChange={(e) => {
                 setTypeFilter(e.target.value)
                 setPage(1)
               }}
-              className={`${inputClass} w-36 min-w-0 shrink`}
+              className={`${inputClass} w-44 min-w-0 shrink`}
             >
               <option value="all">Tous les types</option>
               <option value="delivery">Livraison</option>
@@ -188,7 +188,7 @@ export default function OrdersPage() {
                 setStatusFilter(e.target.value)
                 setPage(1)
               }}
-              className={`${inputClass} w-40 min-w-0 shrink`}
+              className={`${inputClass} w-44 min-w-0 shrink`}
             >
               <option value="all">Tous les statuts</option>
               {(typeFilter === 'all' ? ALL_STATUSES : [...statusesFor(typeFilter), 'cancelled']).map((s) => (

@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ImageUp } from 'lucide-react'
 import api from '../../api/client'
+import DishImage from '../../components/DishImage'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
+import { uploadImage } from '../../lib/imageUpload'
 import { badgeClass, btnDark, btnDanger, btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 
 const EMPTY_FORM = { name: '', description: '', price: '', categoryId: '', imageUrl: '' }
@@ -14,6 +17,8 @@ export default function DishesPage() {
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
 
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -57,11 +62,13 @@ export default function DishesPage() {
   function openCreate() {
     setEditingId(null)
     setForm(EMPTY_FORM)
+    setUploadError('')
     setShowForm(true)
   }
 
   function openEdit(dish) {
     setEditingId(dish.id)
+    setUploadError('')
     setForm({
       name: dish.name,
       description: dish.description ?? '',
@@ -70,6 +77,22 @@ export default function DishesPage() {
       imageUrl: dish.imageUrl ?? '',
     })
     setShowForm(true)
+  }
+
+  async function handleImageFile(e) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setUploading(true)
+    setUploadError('')
+    try {
+      const imageUrl = await uploadImage(file)
+      setForm((f) => ({ ...f, imageUrl }))
+    } catch (err) {
+      setUploadError(err.response?.data?.error ?? err.message ?? "Échec de l'envoi de l'image")
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function handleSubmit(e) {
@@ -118,33 +141,35 @@ export default function DishesPage() {
             }}
             className={`${inputClass} w-40 shrink-0 sm:w-64`}
           />
-          <select
-            value={categoryFilter}
-            onChange={(e) => {
-              setCategoryFilter(e.target.value)
-              setPage(1)
-            }}
-            className={`${inputClass} w-36 shrink-0`}
-          >
-            <option value="all">Toutes les catégories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={String(c.id)}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={availabilityFilter}
-            onChange={(e) => {
-              setAvailabilityFilter(e.target.value)
-              setPage(1)
-            }}
-            className={`${inputClass} w-36 shrink-0`}
-          >
-            <option value="all">Toutes disponibilités</option>
-            <option value="available">Disponible</option>
-            <option value="unavailable">Indisponible</option>
-          </select>
+          <div className="flex flex-nowrap items-center gap-2">
+            <select
+              value={categoryFilter}
+              onChange={(e) => {
+                setCategoryFilter(e.target.value)
+                setPage(1)
+              }}
+              className={`${inputClass} w-44 min-w-0 shrink`}
+            >
+              <option value="all">Toutes les catégories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={String(c.id)}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={availabilityFilter}
+              onChange={(e) => {
+                setAvailabilityFilter(e.target.value)
+                setPage(1)
+              }}
+              className={`${inputClass} w-44 min-w-0 shrink`}
+            >
+              <option value="all">Toutes disponibilités</option>
+              <option value="available">Disponible</option>
+              <option value="unavailable">Indisponible</option>
+            </select>
+          </div>
         </div>
         <button type="button" onClick={openCreate} className={btnPrimary}>
           Nouveau plat
@@ -175,12 +200,38 @@ export default function DishesPage() {
             className={inputClass}
             required
           />
+          <div className="flex items-center gap-2">
+            <label
+              className={`${btnGhost} inline-flex shrink-0 cursor-pointer items-center gap-1.5 ${
+                uploading ? 'pointer-events-none opacity-50' : ''
+              }`}
+            >
+              <ImageUp className="h-4 w-4" />
+              {uploading ? 'Envoi...' : 'Choisir une image'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageFile}
+                className="hidden"
+              />
+            </label>
+            <span className="text-xs text-ink-400">ou collez une URL ci-dessous</span>
+          </div>
+          {uploadError && <p className="text-sm font-semibold text-red-600">{uploadError}</p>}
           <input
             placeholder="URL de l'image (optionnel)"
             value={form.imageUrl}
             onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
             className={inputClass}
           />
+          {form.imageUrl.trim() && (
+            <DishImage
+              key={form.imageUrl}
+              src={form.imageUrl.trim()}
+              alt="Aperçu du plat"
+              className="h-32 w-full rounded-xl"
+            />
+          )}
 
           <select
             value={form.categoryId}
@@ -208,7 +259,7 @@ export default function DishesPage() {
           </div>
 
           <div className="flex items-center gap-3 pt-1">
-            <button type="submit" className={btnDark}>
+            <button type="submit" disabled={uploading} className={btnDark}>
               {editingId ? 'Enregistrer' : 'Créer'}
             </button>
             <button type="button" onClick={() => setShowForm(false)} className="text-sm text-ink-500">
@@ -231,7 +282,16 @@ export default function DishesPage() {
           <tbody>
             {pagedDishes.map((dish) => (
               <tr key={dish.id} className="border-b border-ink-50 last:border-0 hover:bg-ink-50/50">
-                <td className="px-4 py-3 font-semibold text-ink-900">{dish.name}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <DishImage
+                      src={dish.imageUrl}
+                      alt={dish.name}
+                      className="h-12 w-12 shrink-0 rounded-xl [&>svg]:h-5 [&>svg]:w-5"
+                    />
+                    <span className="font-semibold text-ink-900">{dish.name}</span>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-ink-600">{dish.price} MRU</td>
                 <td className="px-4 py-3">
                   <button
@@ -242,17 +302,19 @@ export default function DishesPage() {
                     {dish.isAvailable ? 'Oui' : 'Non'}
                   </button>
                 </td>
-                <td className="px-4 py-3 text-right">
-                  <button
-                    type="button"
-                    onClick={() => openEdit(dish)}
-                    className="mr-3 text-sm font-semibold text-ink-600 hover:text-ink-900"
-                  >
-                    Modifier
-                  </button>
-                  <button type="button" onClick={() => handleDelete(dish.id)} className={btnDanger}>
-                    Supprimer
-                  </button>
+                <td className="px-4 py-3">
+                  <div className="flex flex-nowrap items-center justify-end gap-3 whitespace-nowrap">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(dish)}
+                      className="text-sm font-semibold text-ink-600 hover:text-ink-900"
+                    >
+                      Modifier
+                    </button>
+                    <button type="button" onClick={() => handleDelete(dish.id)} className={btnDanger}>
+                      Supprimer
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

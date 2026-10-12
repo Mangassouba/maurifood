@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { MapPin } from 'lucide-react'
+import { ImageUp, MapPin } from 'lucide-react'
 import api from '../../api/client'
 import DishImage from '../../components/DishImage'
+import { uploadImage } from '../../lib/imageUpload'
 import { btnDark, btnGhost, cardClass, inputClass } from '../../styles/ui'
 
 const EMPTY_FORM = {
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
   const [locating, setLocating] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -64,6 +66,25 @@ export default function ProfilePage() {
         setLocating(false)
       },
     )
+  }
+
+  async function handleLogoFile(e) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setUploading(true)
+    setError('')
+    setMessage('')
+    try {
+      // Un logo s'affiche petit : 512 px suffisent
+      const logoUrl = await uploadImage(file, { maxSize: 512 })
+      setForm((f) => ({ ...f, logoUrl }))
+      setMessage('Logo envoyé. Cliquez sur Enregistrer pour le conserver.')
+    } catch (err) {
+      setError(err.response?.data?.error ?? err.message ?? "Échec de l'envoi du logo")
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function handleSubmit(e) {
@@ -178,8 +199,31 @@ export default function ProfilePage() {
 
         <div>
           <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-400">
-            Logo (URL de l'image)
+            Logo
           </label>
+          <div className="mb-2 flex items-center gap-3">
+            <DishImage
+              key={form.logoUrl}
+              src={form.logoUrl.trim()}
+              alt="Aperçu du logo"
+              className="h-14 w-14 shrink-0 rounded-2xl [&>svg]:h-5 [&>svg]:w-5"
+            />
+            <label
+              className={`${btnGhost} inline-flex shrink-0 cursor-pointer items-center gap-1.5 ${
+                uploading ? 'pointer-events-none opacity-50' : ''
+              }`}
+            >
+              <ImageUp className="h-4 w-4" />
+              {uploading ? 'Envoi...' : 'Choisir un logo'}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleLogoFile}
+                className="hidden"
+              />
+            </label>
+            <span className="text-xs text-ink-400">ou collez une URL ci-dessous</span>
+          </div>
           <input
             placeholder="https://..."
             value={form.logoUrl}
@@ -192,7 +236,7 @@ export default function ProfilePage() {
         {message && <p className="text-sm text-green-700">{message}</p>}
 
         <div className="flex items-center gap-3 pt-1">
-          <button type="submit" disabled={loading} className={btnDark}>
+          <button type="submit" disabled={loading || uploading} className={btnDark}>
             {loading ? 'Enregistrement...' : 'Enregistrer'}
           </button>
           <button type="button" onClick={load} className={btnGhost}>
