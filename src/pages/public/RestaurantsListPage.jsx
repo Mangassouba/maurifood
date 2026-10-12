@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { MapPin, Phone } from 'lucide-react'
 import api from '../../api/client'
 
 export default function RestaurantsListPage() {
@@ -48,6 +49,17 @@ export default function RestaurantsListPage() {
               {restaurant.description && (
                 <p className="mt-0.5 line-clamp-2 text-sm text-ink-500">
                   {restaurant.description}
+                </p>
+              )}
+              {restaurant.address && (
+                <p className="mt-1 flex items-center gap-1 text-xs text-ink-400">
+                  <MapPin className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">{restaurant.address}</span>
+                </p>
+              )}
+              {restaurant.phone && (
+                <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-400">
+                  <Phone className="h-3.5 w-3.5 shrink-0" /> {restaurant.phone}
                 </p>
               )}
               <p className="mt-1 text-xs font-semibold text-brand-600">

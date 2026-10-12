@@ -134,6 +134,9 @@ export default function RestaurantsPage() {
                   Plan : {r.subscription?.plan?.name ?? 'Aucun'} · Statut abo. :{' '}
                   {r.subscription?.status ?? '-'}
                 </p>
+                <p className="mt-0.5 text-sm text-ink-500">
+                  Tél. : {r.phone || '-'} · Adresse : {r.address || '-'}
+                </p>
               </div>
               <div className="flex gap-2">
                 <button
