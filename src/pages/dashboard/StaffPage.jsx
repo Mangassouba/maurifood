@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import api from '../../api/client'
+import ConfirmModal from '../../components/ConfirmModal'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
 import { badgeClass, btnDanger, btnDark, btnPrimary, cardClass, inputClass } from '../../styles/ui'
@@ -13,6 +14,7 @@ export default function StaffPage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [memberToRemove, setMemberToRemove] = useState(null)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
 
@@ -45,9 +47,8 @@ export default function StaffPage() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm('Retirer cet utilisateur de votre équipe ?')) return
-    await api.delete(`/dashboard/users/${id}`)
+  async function removeMember() {
+    await api.delete(`/dashboard/users/${memberToRemove.id}`)
     load()
   }
 
@@ -147,7 +148,7 @@ export default function StaffPage() {
                   <span className={badgeClass('ink')}>Équipe</span>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button type="button" onClick={() => handleDelete(member.id)} className={btnDanger}>
+                  <button type="button" onClick={() => setMemberToRemove(member)} className={btnDanger}>
                     Retirer
                   </button>
                 </td>
@@ -160,6 +161,18 @@ export default function StaffPage() {
         )}
         <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredStaff.length} />
       </div>
+
+      <ConfirmModal
+        open={Boolean(memberToRemove)}
+        title="Retirer ce membre ?"
+        message={
+          memberToRemove &&
+          `${memberToRemove.name || memberToRemove.email} n'aura plus accès au tableau de bord de votre restaurant.`
+        }
+        confirmLabel="Retirer"
+        onConfirm={removeMember}
+        onClose={() => setMemberToRemove(null)}
+      />
     </div>
   )
 }

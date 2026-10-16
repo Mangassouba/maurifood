@@ -88,6 +88,17 @@ export default function OrderTrackingPage() {
               {statusLabel(order.status, order.orderType)}
             </dd>
           </div>
+          {order.orderType === 'delivery' && order.driver && (
+            <div className="flex justify-between gap-4">
+              <dt className="shrink-0 text-ink-400">Livreur</dt>
+              <dd className="text-right font-medium text-ink-900">
+                {order.driver.name} ·{' '}
+                <a href={`tel:${order.driver.phone}`} className="text-brand-600 hover:underline">
+                  {order.driver.phone}
+                </a>
+              </dd>
+            </div>
+          )}
         </dl>
       </div>
 

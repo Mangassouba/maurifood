@@ -14,7 +14,7 @@ const SIZES = [
 export default function DishDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { addItem, updateQuantity } = useCart()
+  const { addItem } = useCart()
 
   const [dish, setDish] = useState(null)
   const [notFound, setNotFound] = useState(false)
@@ -49,15 +49,16 @@ export default function DishDetailPage() {
   const total = unitPrice * qty
 
   function handleAdd() {
-    addItem({
-      id: dish.id,
-      name: dish.name,
-      price: unitPrice,
-      restaurantId: dish.restaurantId,
-      restaurantName: dish.restaurant?.name,
-    })
-    if (qty > 1) updateQuantity(dish.id, qty)
-    navigate('/panier')
+    addItem(
+      {
+        id: dish.id,
+        name: dish.name,
+        price: unitPrice,
+        restaurantId: dish.restaurantId,
+        restaurantName: dish.restaurant?.name,
+      },
+      { quantity: qty, onAdded: () => navigate('/panier') },
+    )
   }
 
   return (

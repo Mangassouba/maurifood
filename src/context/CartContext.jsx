@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import ConfirmModal from '../components/ConfirmModal'
 
 const CartContext = createContext(null)
 const STORAGE_KEY = 'maurifood_cart'
@@ -15,6 +16,8 @@ function loadCart() {
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(loadCart)
+  // Plat en attente quand le panier contient déjà les plats d'un autre restaurant
+  const [pendingAdd, setPendingAdd] = useState(null)
 
   useEffect(() => {
     try {
@@ -24,27 +27,39 @@ export function CartProvider({ children }) {
     }
   }, [cart])
 
-  function addItem(dish) {
-    setCart((prev) => {
-      if (prev.restaurantId && prev.restaurantId !== dish.restaurantId) {
-        const confirmed = window.confirm(
-          "Votre panier contient des plats d'un autre restaurant. Le vider et ajouter ce plat ?",
-        )
-        if (!confirmed) return prev
-        return {
-          restaurantId: dish.restaurantId,
-          restaurantName: dish.restaurantName,
-          items: [{ dishId: dish.id, name: dish.name, price: Number(dish.price), quantity: 1 }],
-        }
-      }
+  function toCartItem(dish, quantity) {
+    return { dishId: dish.id, name: dish.name, price: Number(dish.price), quantity }
+  }
 
+  // `onAdded` est appelé une fois le plat réellement ajouté (après confirmation
+  // éventuelle), par exemple pour rediriger vers le panier.
+  function addItem(dish, { quantity = 1, onAdded } = {}) {
+    if (cart.restaurantId && cart.restaurantId !== dish.restaurantId) {
+      setPendingAdd({ dish, quantity, onAdded })
+      return
+    }
+
+    setCart((prev) => {
       const existing = prev.items.find((i) => i.dishId === dish.id)
       const items = existing
-        ? prev.items.map((i) => (i.dishId === dish.id ? { ...i, quantity: i.quantity + 1 } : i))
-        : [...prev.items, { dishId: dish.id, name: dish.name, price: Number(dish.price), quantity: 1 }]
+        ? prev.items.map((i) =>
+            i.dishId === dish.id ? { ...i, quantity: i.quantity + quantity } : i,
+          )
+        : [...prev.items, toCartItem(dish, quantity)]
 
       return { restaurantId: dish.restaurantId, restaurantName: dish.restaurantName, items }
     })
+    onAdded?.()
+  }
+
+  function confirmReplaceCart() {
+    const { dish, quantity, onAdded } = pendingAdd
+    setCart({
+      restaurantId: dish.restaurantId,
+      restaurantName: dish.restaurantName,
+      items: [toCartItem(dish, quantity)],
+    })
+    onAdded?.()
   }
 
   function updateQuantity(dishId, quantity) {
@@ -67,6 +82,15 @@ export function CartProvider({ children }) {
   return (
     <CartContext.Provider value={{ cart, addItem, updateQuantity, clearCart, subtotal, itemCount }}>
       {children}
+      <ConfirmModal
+        open={Boolean(pendingAdd)}
+        title="Changer de restaurant ?"
+        message={`Votre panier contient des plats de ${cart.restaurantName ?? 'un autre restaurant'}. Pour ajouter « ${pendingAdd?.dish.name ?? ''} », il faut vider le panier.`}
+        confirmLabel="Vider et ajouter"
+        tone="primary"
+        onConfirm={confirmReplaceCart}
+        onClose={() => setPendingAdd(null)}
+      />
     </CartContext.Provider>
   )
 }

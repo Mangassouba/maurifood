@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
+import ConfirmModal from '../../components/ConfirmModal'
 import { useCart } from '../../context/CartContext'
 import { addOrderToHistory } from '../../lib/orderHistory'
 import { btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
@@ -16,6 +17,22 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [offersDelivery, setOffersDelivery] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false)
+
+  useEffect(() => {
+    if (!cart.restaurantId) return
+    api
+      .get('/public/restaurants')
+      .then(({ data }) => {
+        const restaurant = data.find((r) => r.id === cart.restaurantId)
+        setOffersDelivery(Boolean(restaurant?.offersDelivery))
+      })
+      .catch(() => setOffersDelivery(false))
+  }, [cart.restaurantId])
+
+  // Le restaurant peut avoir désactivé la livraison entre-temps
+  const effectiveOrderType = offersDelivery ? orderType : 'pickup'
 
   if (cart.items.length === 0 && !submitted) {
     return <Navigate to="/" replace />
@@ -29,7 +46,7 @@ export default function CheckoutPage() {
       setError('Veuillez indiquer votre nom et votre numéro de téléphone')
       return
     }
-    if (orderType === 'delivery' && !guestAddress.trim()) {
+    if (effectiveOrderType === 'delivery' && !guestAddress.trim()) {
       setError('Veuillez indiquer votre adresse de livraison')
       return
     }
@@ -38,10 +55,10 @@ export default function CheckoutPage() {
     try {
       const { data: order } = await api.post('/orders', {
         restaurantId: cart.restaurantId,
-        orderType,
+        orderType: effectiveOrderType,
         guestName,
         guestPhone,
-        guestAddress: orderType === 'delivery' ? guestAddress : undefined,
+        guestAddress: effectiveOrderType === 'delivery' ? guestAddress : undefined,
         items: cart.items.map((i) => ({ dishId: i.dishId, quantity: i.quantity })),
       })
 
@@ -62,8 +79,7 @@ export default function CheckoutPage() {
     }
   }
 
-  function handleCancel() {
-    if (!window.confirm('Annuler la commande et vider le panier ?')) return
+  function cancelOrder() {
     clearCart()
     navigate('/')
   }
@@ -81,25 +97,32 @@ export default function CheckoutPage() {
               type="button"
               onClick={() => setOrderType('pickup')}
               className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition ${
-                orderType === 'pickup'
+                effectiveOrderType === 'pickup'
                   ? 'bg-ink-900 text-white'
                   : 'border border-ink-100 text-ink-600'
               }`}
             >
               À emporter
             </button>
-            <button
-              type="button"
-              onClick={() => setOrderType('delivery')}
-              className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition ${
-                orderType === 'delivery'
-                  ? 'bg-ink-900 text-white'
-                  : 'border border-ink-100 text-ink-600'
-              }`}
-            >
-              Livraison
-            </button>
+            {offersDelivery && (
+              <button
+                type="button"
+                onClick={() => setOrderType('delivery')}
+                className={`flex-1 rounded-full py-2.5 text-sm font-semibold transition ${
+                  effectiveOrderType === 'delivery'
+                    ? 'bg-ink-900 text-white'
+                    : 'border border-ink-100 text-ink-600'
+                }`}
+              >
+                Livraison
+              </button>
+            )}
           </div>
+          {!offersDelivery && (
+            <p className="mt-2 text-xs text-ink-400">
+              Ce restaurant ne propose pas la livraison : commande à retirer sur place.
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col gap-3">
@@ -119,7 +142,7 @@ export default function CheckoutPage() {
             className={inputClass}
             required
           />
-          {orderType === 'delivery' && (
+          {effectiveOrderType === 'delivery' && (
             <textarea
               placeholder="Adresse de livraison"
               value={guestAddress}
@@ -143,11 +166,21 @@ export default function CheckoutPage() {
           <button type="submit" disabled={loading} className={`${btnPrimary} flex-1`}>
             {loading ? 'Envoi...' : 'Confirmer la commande'}
           </button>
-          <button type="button" onClick={handleCancel} className={btnGhost}>
+          <button type="button" onClick={() => setConfirmCancel(true)} className={btnGhost}>
             Annuler
           </button>
         </div>
       </form>
+
+      <ConfirmModal
+        open={confirmCancel}
+        title="Annuler la commande ?"
+        message="Tous les plats de votre panier seront retirés."
+        confirmLabel="Vider le panier"
+        cancelLabel="Garder mon panier"
+        onConfirm={cancelOrder}
+        onClose={() => setConfirmCancel(false)}
+      />
     </div>
   )
 }

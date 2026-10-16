@@ -11,7 +11,7 @@ import {
   statusLabel,
   statusesFor,
 } from '../../lib/orderStatus'
-import { badgeClass, cardClass, inputClass } from '../../styles/ui'
+import { badgeClass, btnDark, cardClass, inputClass } from '../../styles/ui'
 
 const ALL_STATUSES = [...STATUS_FLOW, 'cancelled']
 
@@ -72,6 +72,8 @@ export default function OrdersPage() {
   const [typeFilter, setTypeFilter] = useState('all')
   const [page, setPage] = useState(1)
   const [detailsOrder, setDetailsOrder] = useState(null)
+  const [drivers, setDrivers] = useState([])
+  const [actionError, setActionError] = useState('')
   const [codeInput, setCodeInput] = useState('')
   const [codeError, setCodeError] = useState('')
 
@@ -84,12 +86,46 @@ export default function OrdersPage() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [])
+  useEffect(() => {
+    load()
+    api
+      .get('/dashboard/drivers')
+      .then(({ data }) => setDrivers(data))
+      .catch(() => setDrivers([]))
+  }, [])
 
   async function updateStatus(id, status) {
-    await api.put(`/dashboard/orders/${id}/status`, { status })
+    try {
+      await api.put(`/dashboard/orders/${id}/status`, { status })
+    } catch (err) {
+      setActionError(err.response?.data?.error ?? 'Impossible de modifier le statut')
+      return
+    }
     load()
     setDetailsOrder((current) => (current?.id === id ? { ...current, status } : current))
+  }
+
+  async function assignDriver(id, driverId) {
+    try {
+      await api.put(`/dashboard/orders/${id}/driver`, { driverId: driverId || null })
+    } catch (err) {
+      setActionError(err.response?.data?.error ?? "Impossible d'assigner le livreur")
+      return
+    }
+    const driver = drivers.find((d) => d.id === Number(driverId)) ?? null
+    load()
+    setDetailsOrder((current) =>
+      current?.id === id ? { ...current, driverId: driver?.id ?? null, driver } : current,
+    )
+  }
+
+  function advance(order, next) {
+    // Impossible de partir en livraison sans livreur : on ouvre le détail pour en choisir un
+    if (next === 'out_for_delivery' && !order.driverId) {
+      setDetailsOrder(order)
+      return
+    }
+    updateStatus(order.id, next)
   }
 
   function verifyCode(e) {
@@ -237,6 +273,7 @@ export default function OrdersPage() {
                       </button>
                       <p className="text-xs text-ink-400">
                         {order.orderType === 'delivery' ? 'Livraison' : 'À emporter'}
+                        {order.driver && ` · ${order.driver.name}`}
                       </p>
                     </td>
                     <td className="px-5 py-4">
@@ -267,7 +304,7 @@ export default function OrdersPage() {
                         {next && next !== 'delivered' && (
                           <button
                             type="button"
-                            onClick={() => updateStatus(order.id, next)}
+                            onClick={() => advance(order, next)}
                             className={btnAdvance}
                           >
                             <CircleCheck className="h-4 w-4" /> {advanceLabel(next, order.orderType)}
@@ -326,6 +363,37 @@ export default function OrdersPage() {
               )}
             </div>
 
+            {detailsOrder.orderType === 'delivery' && (
+              <div>
+                <label className="mb-1 block text-xs font-bold tracking-wide text-ink-400 uppercase">
+                  Livreur
+                </label>
+                <select
+                  value={detailsOrder.driverId ?? ''}
+                  onChange={(e) => assignDriver(detailsOrder.id, e.target.value)}
+                  disabled={FINAL_STATUSES.includes(detailsOrder.status)}
+                  className={inputClass}
+                >
+                  <option value="">Aucun livreur assigné</option>
+                  {drivers
+                    .filter((d) => d.isActive || d.id === detailsOrder.driverId)
+                    .map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.name} — {d.phone}
+                        {d.vehicle ? ` (${d.vehicle})` : ''}
+                      </option>
+                    ))}
+                </select>
+                {!detailsOrder.driverId && !FINAL_STATUSES.includes(detailsOrder.status) && (
+                  <p className="mt-1 text-xs text-brand-700">
+                    {drivers.some((d) => d.isActive)
+                      ? 'Assignez un livreur pour pouvoir envoyer la commande en livraison.'
+                      : 'Aucun livreur actif : ajoutez-en un dans la page Livraison.'}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-col gap-2 border-y border-ink-100 py-3">
               {detailsOrder.items?.map((item) => (
                 <div key={item.id} className="flex items-center justify-between text-sm">
@@ -379,6 +447,15 @@ export default function OrdersPage() {
             </select>
           </div>
         )}
+      </Modal>
+
+      <Modal open={Boolean(actionError)} onClose={() => setActionError('')} title="Action impossible">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-ink-600">{actionError}</p>
+          <button type="button" onClick={() => setActionError('')} className={`${btnDark} self-end`}>
+            OK
+          </button>
+        </div>
       </Modal>
     </div>
   )

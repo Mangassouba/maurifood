@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
 import { useCart } from '../../context/CartContext'
+import ConfirmModal from '../../components/ConfirmModal'
 import DishImage from '../../components/DishImage'
 import QuantityStepper from '../../components/QuantityStepper'
 import { cardClass } from '../../styles/ui'
@@ -8,6 +10,7 @@ import { cardClass } from '../../styles/ui'
 export default function CartPage() {
   const { cart, updateQuantity, clearCart, subtotal } = useCart()
   const navigate = useNavigate()
+  const [confirmCancel, setConfirmCancel] = useState(false)
 
   if (cart.items.length === 0) {
     return (
@@ -26,8 +29,7 @@ export default function CartPage() {
     )
   }
 
-  function handleCancelOrder() {
-    if (!window.confirm('Annuler la commande et vider le panier ?')) return
+  function cancelOrder() {
     clearCart()
     navigate('/')
   }
@@ -41,7 +43,7 @@ export default function CartPage() {
         </div>
         <button
           type="button"
-          onClick={handleCancelOrder}
+          onClick={() => setConfirmCancel(true)}
           className="shrink-0 text-sm font-semibold text-red-600 hover:text-red-700"
         >
           Annuler la commande
@@ -82,6 +84,16 @@ export default function CartPage() {
           Commander
         </button>
       </div>
+
+      <ConfirmModal
+        open={confirmCancel}
+        title="Annuler la commande ?"
+        message="Tous les plats de votre panier seront retirés."
+        confirmLabel="Vider le panier"
+        cancelLabel="Garder mon panier"
+        onConfirm={cancelOrder}
+        onClose={() => setConfirmCancel(false)}
+      />
     </div>
   )
 }

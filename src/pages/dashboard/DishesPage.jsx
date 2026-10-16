@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ImageUp } from 'lucide-react'
 import api from '../../api/client'
+import ConfirmModal from '../../components/ConfirmModal'
 import DishImage from '../../components/DishImage'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
@@ -19,6 +20,7 @@ export default function DishesPage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
+  const [dishToDelete, setDishToDelete] = useState(null)
 
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -110,9 +112,8 @@ export default function DishesPage() {
     loadDishes()
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm('Supprimer ce plat ?')) return
-    await api.delete(`/dashboard/dishes/${id}`)
+  async function deleteDish() {
+    await api.delete(`/dashboard/dishes/${dishToDelete.id}`)
     loadDishes()
   }
 
@@ -311,7 +312,7 @@ export default function DishesPage() {
                     >
                       Modifier
                     </button>
-                    <button type="button" onClick={() => handleDelete(dish.id)} className={btnDanger}>
+                    <button type="button" onClick={() => setDishToDelete(dish)} className={btnDanger}>
                       Supprimer
                     </button>
                   </div>
@@ -325,6 +326,16 @@ export default function DishesPage() {
         )}
         <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredDishes.length} />
       </div>
+
+      <ConfirmModal
+        open={Boolean(dishToDelete)}
+        title="Supprimer ce plat ?"
+        message={
+          dishToDelete && `« ${dishToDelete.name} » sera retiré de votre menu. Cette action est définitive.`
+        }
+        onConfirm={deleteDish}
+        onClose={() => setDishToDelete(null)}
+      />
     </div>
   )
 }
