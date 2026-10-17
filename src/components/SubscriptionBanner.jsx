@@ -22,11 +22,15 @@ export default function SubscriptionBanner() {
 
   if (!subscription) return null
 
-  if (subscription.status === 'past_due') {
+  if (
+    ['past_due', 'cancelled'].includes(subscription.status) ||
+    (daysLeft !== null && daysLeft <= 0)
+  ) {
     return (
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
         <p className="text-sm font-semibold text-red-700">
-          Votre abonnement a expiré — votre restaurant n'est plus visible par les clients.
+          Votre abonnement a expiré — votre restaurant n'est plus visible par les clients et
+          l'accès au tableau de bord est suspendu.
         </p>
         <Link
           to="/dashboard/subscription"
