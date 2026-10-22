@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, UtensilsCrossed, ClipboardList, Bike, CreditCard, Store, Users } from 'lucide-react'
+import { LayoutDashboard, UtensilsCrossed, Calculator, ClipboardList, Bike, CreditCard, Store, Users } from 'lucide-react'
 import api from '../../api/client'
 import AdminShell from '../../components/AdminShell'
 import SubscriptionBanner from '../../components/SubscriptionBanner'
@@ -14,6 +14,7 @@ const subscriptionLink = { to: SUBSCRIPTION_PATH, label: 'Abonnement', icon: Cre
 const baseLinks = [
   { to: '/dashboard', label: 'Aperçu', end: true, icon: LayoutDashboard },
   { to: '/dashboard/dishes', label: 'Plats', icon: UtensilsCrossed },
+  { to: '/dashboard/caisse', label: 'Caisse', icon: Calculator },
   { to: '/dashboard/orders', label: 'Commandes', icon: ClipboardList },
   { to: '/dashboard/delivery', label: 'Livraison', icon: Bike },
   subscriptionLink,

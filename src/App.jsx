@@ -13,6 +13,7 @@ import DashboardHome from './pages/dashboard/DashboardHome'
 import DeliveryPage from './pages/dashboard/DeliveryPage'
 import DishesPage from './pages/dashboard/DishesPage'
 import OrdersPage from './pages/dashboard/OrdersPage'
+import PosPage from './pages/dashboard/PosPage'
 import SubscriptionPage from './pages/dashboard/SubscriptionPage'
 import ProfilePage from './pages/dashboard/ProfilePage'
 import StaffPage from './pages/dashboard/StaffPage'
@@ -59,6 +60,7 @@ function App() {
               <Route index element={<DashboardHome />} />
               <Route path="dishes" element={<DishesPage />} />
               <Route path="orders" element={<OrdersPage />} />
+              <Route path="caisse" element={<PosPage />} />
               <Route path="delivery" element={<DeliveryPage />} />
               <Route path="subscription" element={<SubscriptionPage />} />
               <Route path="profil" element={<ProfilePage />} />

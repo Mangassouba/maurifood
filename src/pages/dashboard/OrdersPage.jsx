@@ -272,7 +272,11 @@ export default function OrdersPage() {
                         {order.code}
                       </button>
                       <p className="text-xs text-ink-400">
-                        {order.orderType === 'delivery' ? 'Livraison' : 'À emporter'}
+                        {order.source === 'pos'
+                          ? 'Vente caisse'
+                          : order.orderType === 'delivery'
+                            ? 'Livraison'
+                            : 'À emporter'}
                         {order.driver && ` · ${order.driver.name}`}
                       </p>
                     </td>

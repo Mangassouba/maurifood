@@ -4,6 +4,8 @@ import { statusLabel } from './orderStatus'
 const MARGIN_X = 40
 const RIGHT_EDGE = 555
 
+const PAYMENT_LABELS = { cash: 'Espèces', card: 'Carte', mobile_money: 'Mobile money' }
+
 export function downloadReceiptPdf(order) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   let y = 55
@@ -28,8 +30,17 @@ export function downloadReceiptPdf(order) {
   const infoLines = [
     `Restaurant : ${order.restaurant?.name ?? '-'}`,
     `Client : ${order.guestName}`,
-    `Téléphone : ${order.guestPhone}`,
-    `Type : ${order.orderType === 'delivery' ? 'Livraison' : 'À emporter'}`,
+    ...(order.guestPhone ? [`Téléphone : ${order.guestPhone}`] : []),
+    `Type : ${
+      order.source === 'pos'
+        ? 'Vente au comptoir'
+        : order.orderType === 'delivery'
+          ? 'Livraison'
+          : 'À emporter'
+    }`,
+    ...(order.source === 'pos'
+      ? [`Paiement : ${PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}`]
+      : []),
     ...(order.guestAddress ? [`Adresse : ${order.guestAddress}`] : []),
     `Statut : ${statusLabel(order.status, order.orderType)}`,
     `Date : ${new Date(order.createdAt).toLocaleString('fr-FR')}`,
