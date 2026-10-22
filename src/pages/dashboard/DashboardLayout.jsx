@@ -17,13 +17,13 @@ const baseLinks = [
   { to: '/dashboard/orders', label: 'Commandes', icon: ClipboardList },
   { to: '/dashboard/delivery', label: 'Livraison', icon: Bike },
   subscriptionLink,
-  { to: '/dashboard/profil', label: 'Profil', icon: Store },
-]
+    { to: '/dashboard/profil', label: 'Profil', icon: Store },
+  ]
 
-const ownerOnlyLinks = [{ to: '/dashboard/equipe', label: 'Équipe', icon: Users }]
+  const ownerOnlyLinks = [{ to: '/dashboard/equipe', label: 'Équipe', icon: Users }]
 
-export default function DashboardLayout() {
-  const { user } = useAuth()
+  export default function DashboardLayout() {
+    const { user } = useAuth()
   const location = useLocation()
   const [loaded, setLoaded] = useState(false)
   const [expired, setExpired] = useState(false)

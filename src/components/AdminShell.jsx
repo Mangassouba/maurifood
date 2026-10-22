@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Home, LogOut, Menu, UtensilsCrossed } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from './NotificationBell'
+import RestaurantNotificationBell from './RestaurantNotificationBell'
 
 const ROLE_LABELS = {
   restaurant_owner: 'Propriétaire',
@@ -103,6 +104,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
 
           <div className="flex items-center gap-3">
             {user?.role === 'super_admin' && <NotificationBell />}
+            {['restaurant_owner', 'staff'].includes(user?.role) && <RestaurantNotificationBell />}
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold leading-tight text-ink-900">
                 {user?.name || user?.email}
