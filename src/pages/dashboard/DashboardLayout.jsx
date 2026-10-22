@@ -5,6 +5,7 @@ import api from '../../api/client'
 import AdminShell from '../../components/AdminShell'
 import SubscriptionBanner from '../../components/SubscriptionBanner'
 import { useAuth } from '../../context/AuthContext'
+import { isSubscriptionExpired } from '../../lib/subscription'
 
 const SUBSCRIPTION_PATH = '/dashboard/subscription'
 
@@ -21,15 +22,6 @@ const baseLinks = [
 
 const ownerOnlyLinks = [{ to: '/dashboard/equipe', label: 'Équipe', icon: Users }]
 
-// Même règle que le middleware subscriptionActive côté API.
-function isExpired(subscription) {
-  if (!subscription) return false
-  if (['past_due', 'cancelled'].includes(subscription.status)) return true
-  return Boolean(
-    subscription.currentPeriodEnd && new Date(subscription.currentPeriodEnd) < new Date(),
-  )
-}
-
 export default function DashboardLayout() {
   const { user } = useAuth()
   const location = useLocation()
@@ -39,7 +31,7 @@ export default function DashboardLayout() {
   useEffect(() => {
     api
       .get('/dashboard/subscription')
-      .then(({ data }) => setExpired(isExpired(data)))
+      .then(({ data }) => setExpired(isSubscriptionExpired(data)))
       .catch(() => setExpired(false))
       .finally(() => setLoaded(true))
   }, [location.pathname])

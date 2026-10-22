@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CreditCard } from 'lucide-react'
 import api from '../../api/client'
+import { formatSubscriptionDate as formatDate, remainingLabel } from '../../lib/subscription'
 import { badgeClass, btnPrimary, cardClass } from '../../styles/ui'
 
 const STATUS_TONE = {
@@ -62,6 +63,27 @@ export default function SubscriptionPage() {
               <span className={`${badgeClass(STATUS_TONE[subscription.status] ?? 'ink')} mt-1`}>
                 {STATUS_LABELS[subscription.status] ?? subscription.status}
               </span>
+              {(subscription.currentPeriodStart || subscription.currentPeriodEnd) && (
+                <p className="mt-2 text-sm text-ink-500">
+                  {subscription.currentPeriodStart && (
+                    <>
+                      Du{' '}
+                      <strong className="text-ink-900">
+                        {formatDate(subscription.currentPeriodStart)}
+                      </strong>{' '}
+                    </>
+                  )}
+                  {subscription.currentPeriodEnd && (
+                    <>
+                      {subscription.currentPeriodStart ? 'au' : "Jusqu'au"}{' '}
+                      <strong className="text-ink-900">
+                        {formatDate(subscription.currentPeriodEnd)}
+                      </strong>{' '}
+                      · {remainingLabel(subscription.currentPeriodEnd)}
+                    </>
+                  )}
+                </p>
+              )}
             </div>
           </div>
         ) : (
