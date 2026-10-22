@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Printer } from 'lucide-react'
+import { FileSpreadsheet, Printer } from 'lucide-react'
 import api from '../../api/client'
 import Pagination from '../../components/Pagination'
 import { downloadReceiptPdf } from '../../lib/receiptPdf'
-import { cardClass } from '../../styles/ui'
+import { downloadSalesXlsx } from '../../lib/salesXlsx'
+import { btnGhost, cardClass } from '../../styles/ui'
 
 const PAGE_SIZE = 15
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -45,6 +46,7 @@ export default function PosSalesTable({ restaurantName }) {
   const [loading, setLoading] = useState(true)
   const [period, setPeriod] = useState('today')
   const [page, setPage] = useState(1)
+  const [exporting, setExporting] = useState(false)
 
   useEffect(() => {
     api
@@ -71,6 +73,18 @@ export default function PosSalesTable({ restaurantName }) {
     return { revenue, byMethod }
   }, [filteredSales])
 
+  async function exportXlsx() {
+    setExporting(true)
+    try {
+      await downloadSalesXlsx(filteredSales, {
+        restaurantName,
+        periodLabel: PERIODS.find((p) => p.value === period)?.label,
+      })
+    } finally {
+      setExporting(false)
+    }
+  }
+
   const pageCount = Math.max(1, Math.ceil(filteredSales.length / PAGE_SIZE))
   const currentPage = Math.min(page, pageCount)
   const pagedSales = filteredSales.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -84,7 +98,7 @@ export default function PosSalesTable({ restaurantName }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {PERIODS.map((p) => (
           <button
             key={p.value}
@@ -102,6 +116,15 @@ export default function PosSalesTable({ restaurantName }) {
             {p.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={exportXlsx}
+          disabled={filteredSales.length === 0 || exporting}
+          className={`${btnGhost} ml-auto inline-flex items-center gap-1.5 disabled:opacity-40`}
+        >
+          <FileSpreadsheet className="h-4 w-4 text-green-700" />
+          {exporting ? 'Export…' : 'Exporter Excel'}
+        </button>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
