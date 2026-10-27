@@ -4,6 +4,7 @@ import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import DishImage from '../../components/DishImage'
 import QuantityStepper from '../../components/QuantityStepper'
+import { t } from '../../i18n'
 
 const SIZES = [
   { id: 'small', label: 'Petit', factor: 0.85 },
@@ -35,13 +36,13 @@ export default function DishDetailPage() {
   if (notFound) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-16 text-center text-ink-500">
-        Ce plat n'existe pas ou n'est plus disponible.
+        {t("Ce plat n'existe pas ou n'est plus disponible.")}
       </div>
     )
   }
 
   if (!dish) {
-    return <div className="mx-auto max-w-3xl px-6 py-16 text-center text-ink-400">Chargement...</div>
+    return <div className="mx-auto max-w-3xl px-6 py-16 text-center text-ink-400">{t('Chargement...')}</div>
   }
 
   const selectedFactor = SIZES.find((s) => s.id === size)?.factor ?? 1
@@ -67,9 +68,9 @@ export default function DishDetailPage() {
         type="button"
         onClick={() => navigate(-1)}
         className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm hover:shadow-md"
-        aria-label="Retour"
+        aria-label={t('Retour')}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="rtl:-scale-x-100" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
@@ -96,13 +97,13 @@ export default function DishDetailPage() {
 
       {dish.description && (
         <div className="mt-6">
-          <h2 className="mb-1 text-sm font-bold text-ink-900">À propos du plat</h2>
+          <h2 className="mb-1 text-sm font-bold text-ink-900">{t('À propos du plat')}</h2>
           <p className="text-sm leading-relaxed text-ink-500">{dish.description}</p>
         </div>
       )}
 
       <div className="mt-6">
-        <h2 className="mb-2 text-sm font-bold text-ink-900">Taille</h2>
+        <h2 className="mb-2 text-sm font-bold text-ink-900">{t('Taille')}</h2>
         <div className="flex gap-2">
           {SIZES.map((s) => (
             <button
@@ -115,7 +116,7 @@ export default function DishDetailPage() {
                   : 'border-ink-100 text-ink-600'
               }`}
             >
-              {s.label}
+              {t(s.label)}
             </button>
           ))}
         </div>
@@ -124,7 +125,7 @@ export default function DishDetailPage() {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
           <div>
-            <p className="text-xs text-ink-400">Prix</p>
+            <p className="text-xs text-ink-400">{t('Prix')}</p>
             <p className="text-xl font-extrabold text-ink-900">{total} MRU</p>
           </div>
           <button
@@ -132,7 +133,7 @@ export default function DishDetailPage() {
             onClick={handleAdd}
             className="rounded-full bg-brand-500 px-8 py-3 text-sm font-bold text-ink-900 shadow-md transition hover:bg-brand-400"
           >
-            Ajouter au panier
+            {t('Ajouter au panier')}
           </button>
         </div>
       </div>

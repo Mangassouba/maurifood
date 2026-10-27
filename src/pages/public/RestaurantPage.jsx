@@ -4,6 +4,7 @@ import { MapPin, Phone } from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
+import { t } from '../../i18n'
 
 export default function RestaurantPage() {
   const { slug } = useParams()
@@ -18,7 +19,7 @@ export default function RestaurantPage() {
   }, [slug])
 
   if (!restaurant) {
-    return <div className="mx-auto max-w-6xl px-6 py-16 text-center text-ink-400">Chargement...</div>
+    return <div className="mx-auto max-w-6xl px-6 py-16 text-center text-ink-400">{t('Chargement...')}</div>
   }
 
   function quickAdd(dish) {

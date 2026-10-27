@@ -17,6 +17,7 @@ import {
 import api from '../../api/client'
 import Pagination from '../../components/Pagination'
 import { cardClass, inputClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 const PAGE_SIZE = 15
 
@@ -57,13 +58,13 @@ const FILTERS = [
 function formatRelativeTime(dateString) {
   const diffMs = Date.now() - new Date(dateString).getTime()
   const minutes = Math.floor(diffMs / 60000)
-  if (minutes < 1) return "à l'instant"
-  if (minutes < 60) return `il y a ${minutes} min`
+  if (minutes < 1) return t("à l'instant")
+  if (minutes < 60) return t('il y a {n} min', { n: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `il y a ${hours} h`
+  if (hours < 24) return t('il y a {n} h', { n: hours })
   const days = Math.floor(hours / 24)
-  if (days < 30) return `il y a ${days} j`
-  return new Date(dateString).toLocaleDateString('fr-FR')
+  if (days < 30) return t('il y a {n} j', { n: days })
+  return new Date(dateString).toLocaleDateString(getLocale())
 }
 
 export default function ActivityLogPage() {
@@ -99,15 +100,14 @@ export default function ActivityLogPage() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Journal d'activité</h1>
+      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t("Journal d'activité")}</h1>
       <p className="mb-4 text-sm text-ink-400">
-        Inscriptions, connexions/déconnexions, ajouts/modifications/suppressions et abonnements
-        (100 derniers événements).
+        {t('Inscriptions, connexions/déconnexions, ajouts/modifications/suppressions et abonnements (100 derniers événements).')}
       </p>
 
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <input
-          placeholder="Rechercher dans le journal..."
+          placeholder={t('Rechercher dans le journal...')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -125,15 +125,15 @@ export default function ActivityLogPage() {
         >
           {FILTERS.map((f) => (
             <option key={f.value} value={f.value}>
-              {f.label}
+              {t(f.label)}
             </option>
           ))}
         </select>
       </div>
 
-      {loading && <p className="text-ink-400">Chargement...</p>}
+      {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
       {!loading && filteredLogs.length === 0 && (
-        <p className="text-ink-400">Aucune activité ne correspond à votre recherche.</p>
+        <p className="text-ink-400">{t('Aucune activité ne correspond à votre recherche.')}</p>
       )}
 
       <div className={`${cardClass} divide-y divide-ink-50 p-0`}>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/client'
+import { t } from '../i18n'
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
@@ -29,14 +30,13 @@ export default function SubscriptionBanner() {
     return (
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
         <p className="text-sm font-semibold text-red-700">
-          Votre abonnement a expiré — votre restaurant n'est plus visible par les clients et
-          l'accès au tableau de bord est suspendu.
+          {t("Votre abonnement a expiré — votre restaurant n'est plus visible par les clients et l'accès au tableau de bord est suspendu.")}
         </p>
         <Link
           to="/dashboard/subscription"
           className="shrink-0 rounded-full bg-red-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-red-700"
         >
-          Renouveler maintenant
+          {t('Renouveler maintenant')}
         </Link>
       </div>
     )
@@ -46,14 +46,15 @@ export default function SubscriptionBanner() {
     return (
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-300 bg-brand-50 px-4 py-3">
         <p className="text-sm font-semibold text-brand-700">
-          Votre abonnement expire dans {daysLeft} jour{daysLeft > 1 ? 's' : ''}. Renouvelez-le
-          pour éviter la désactivation de votre restaurant.
+          {daysLeft > 1
+            ? t('Votre abonnement expire dans {n} jours. Renouvelez-le pour éviter la désactivation de votre restaurant.', { n: daysLeft })
+            : t('Votre abonnement expire dans {n} jour. Renouvelez-le pour éviter la désactivation de votre restaurant.', { n: daysLeft })}
         </p>
         <Link
           to="/dashboard/subscription"
           className="shrink-0 rounded-full bg-brand-500 px-4 py-1.5 text-xs font-bold text-ink-900 hover:bg-brand-400"
         >
-          Renouveler
+          {t('Renouveler')}
         </Link>
       </div>
     )

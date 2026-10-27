@@ -1,5 +1,6 @@
 import { cardClass } from '../../styles/ui'
 import { genericStatusLabel } from '../../lib/orderStatus'
+import { t } from '../../i18n'
 
 const STATUS_COLOR = {
   pending: '#8a8377',
@@ -17,10 +18,10 @@ export default function StatusBreakdownChart({ data }) {
 
   return (
     <div className={cardClass}>
-      <h3 className="font-bold text-ink-900">Commandes par statut</h3>
+      <h3 className="font-bold text-ink-900">{t('Commandes par statut')}</h3>
 
       {total === 0 ? (
-        <p className="mt-6 text-sm text-ink-400">Aucune commande pour le moment.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucune commande pour le moment.')}</p>
       ) : (
         <div className="mt-4 flex flex-col gap-3">
           {data.map((d) => (
@@ -35,7 +36,7 @@ export default function StatusBreakdownChart({ data }) {
                   }}
                 />
               </div>
-              <span className="w-6 shrink-0 text-right text-sm font-semibold text-ink-900">
+              <span className="w-6 shrink-0 text-end text-sm font-semibold text-ink-900">
                 {d.count}
               </span>
             </div>

@@ -7,6 +7,7 @@ import QuantityStepper from '../../components/QuantityStepper'
 import PosSalesTable from './PosSalesTable'
 import { downloadReceiptPdf } from '../../lib/receiptPdf'
 import { btnDark, btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const PAYMENT_OPTIONS = [
   { value: 'cash', label: 'Espèces', icon: Banknote },
@@ -89,7 +90,7 @@ export default function PosPage() {
       setCompletedSale({ order: data, change: paymentMethod === 'cash' && amountReceived ? change : null })
       resetSale()
     } catch (err) {
-      setError(err.response?.data?.error ?? "La vente n'a pas pu être enregistrée.")
+      setError(err.response?.data?.error ?? t("La vente n'a pas pu être enregistrée."))
     } finally {
       setSubmitting(false)
     }
@@ -108,16 +109,16 @@ export default function PosPage() {
   return (
     <div>
       <div className="mb-5 inline-flex rounded-full border border-ink-100 bg-white p-1">
-        {tabs.map((t) => (
+        {tabs.map((tabItem) => (
           <button
-            key={t.value}
+            key={tabItem.value}
             type="button"
-            onClick={() => setTab(t.value)}
+            onClick={() => setTab(tabItem.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-bold transition ${
-              tab === t.value ? 'bg-brand-500 text-ink-900' : 'text-ink-500 hover:text-ink-900'
+              tab === tabItem.value ? 'bg-brand-500 text-ink-900' : 'text-ink-500 hover:text-ink-900'
             }`}
           >
-            {t.label}
+            {t(tabItem.label)}
           </button>
         ))}
       </div>
@@ -128,10 +129,10 @@ export default function PosPage() {
     <div className="grid gap-6 pb-20 lg:grid-cols-[1fr_340px] lg:pb-0">
       <section className="min-w-0">
         <div className="relative mb-3">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+          <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
           <input
-            className={`${inputClass} pl-9`}
-            placeholder="Rechercher un plat…"
+            className={`${inputClass} ps-9`}
+            placeholder={t('Rechercher un plat…')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -143,7 +144,7 @@ export default function PosPage() {
             onClick={() => setCategoryFilter('all')}
             className={categoryButton(categoryFilter === 'all')}
           >
-            Tous
+            {t('Tous')}
           </button>
           {categories.map((c) => (
             <button
@@ -158,7 +159,7 @@ export default function PosPage() {
         </div>
 
         {visibleDishes.length === 0 ? (
-          <p className="py-10 text-center text-sm text-ink-400">Aucun plat disponible.</p>
+          <p className="py-10 text-center text-sm text-ink-400">{t('Aucun plat disponible.')}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {visibleDishes.map((dish) => {
@@ -168,11 +169,11 @@ export default function PosPage() {
                   key={dish.id}
                   type="button"
                   onClick={() => addDish(dish)}
-                  className="relative overflow-hidden rounded-2xl border border-ink-100 bg-white text-left shadow-sm transition hover:border-brand-300 hover:shadow-md active:scale-[0.98]"
+                  className="relative overflow-hidden rounded-2xl border border-ink-100 bg-white text-start shadow-sm transition hover:border-brand-300 hover:shadow-md active:scale-[0.98]"
                 >
                   <DishImage src={dish.imageUrl} alt={dish.name} className="h-24 w-full" />
                   {inCart && (
-                    <span className="absolute right-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-bold text-ink-900">
+                    <span className="absolute end-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand-500 px-1.5 text-xs font-bold text-ink-900">
                       {inCart}
                     </span>
                   )}
@@ -195,21 +196,21 @@ export default function PosPage() {
         className={`${cardClass} flex h-fit flex-col gap-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)]`}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-ink-900">Ticket</h2>
+          <h2 className="text-base font-extrabold text-ink-900">{t('Ticket')}</h2>
           {cart.length > 0 && (
             <button
               type="button"
               onClick={resetSale}
               className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700"
             >
-              <Trash2 className="h-3.5 w-3.5" /> Vider
+              <Trash2 className="h-3.5 w-3.5" /> {t('Vider')}
             </button>
           )}
         </div>
 
         {cart.length === 0 ? (
           <p className="py-6 text-center text-sm text-ink-400">
-            Touchez un plat pour l'ajouter au ticket.
+            {t("Touchez un plat pour l'ajouter au ticket.")}
           </p>
         ) : (
           <ul className="flex max-h-72 min-h-0 flex-col divide-y divide-ink-100 overflow-y-auto lg:max-h-none">
@@ -233,7 +234,7 @@ export default function PosPage() {
         )}
 
         <div className="flex items-baseline justify-between border-t border-ink-100 pt-3">
-          <span className="text-sm font-semibold text-ink-600">Total</span>
+          <span className="text-sm font-semibold text-ink-600">{t('Total')}</span>
           <span className="font-mono text-2xl font-extrabold text-ink-900">{total.toFixed(2)} MRU</span>
         </div>
 
@@ -250,14 +251,14 @@ export default function PosPage() {
               }`}
             >
               <option.icon className="h-4 w-4" />
-              {option.label}
+              {t(option.label)}
             </button>
           ))}
         </div>
 
         {paymentMethod === 'cash' && (
           <div>
-            <label className="mb-1 block text-xs font-semibold text-ink-500">Montant reçu (MRU)</label>
+            <label className="mb-1 block text-xs font-semibold text-ink-500">{t('Montant reçu (MRU)')}</label>
             <input
               type="number"
               min="0"
@@ -269,20 +270,20 @@ export default function PosPage() {
             {amountReceived !== '' && cart.length > 0 && (
               <p className={`mt-1.5 text-sm font-semibold ${change < 0 ? 'text-red-600' : 'text-green-700'}`}>
                 {change < 0
-                  ? `Manque ${Math.abs(change).toFixed(2)} MRU`
-                  : `Monnaie à rendre : ${change.toFixed(2)} MRU`}
+                  ? t('Manque {amount} MRU', { amount: Math.abs(change).toFixed(2) })
+                  : t('Monnaie à rendre : {amount} MRU', { amount: change.toFixed(2) })}
               </p>
             )}
           </div>
         )}
 
         <div>
-          <label className="mb-1 block text-xs font-semibold text-ink-500">Nom du client (optionnel)</label>
+          <label className="mb-1 block text-xs font-semibold text-ink-500">{t('Nom du client (optionnel)')}</label>
           <input
             className={inputClass}
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Client comptoir"
+            placeholder={t('Client comptoir')}
           />
         </div>
 
@@ -298,7 +299,7 @@ export default function PosPage() {
           }
           className={`${btnPrimary} py-3 text-base`}
         >
-          {submitting ? 'Enregistrement…' : `Encaisser ${total.toFixed(2)} MRU`}
+          {submitting ? t('Enregistrement…') : t('Encaisser {amount} MRU', { amount: total.toFixed(2) })}
         </button>
       </aside>
 
@@ -311,13 +312,13 @@ export default function PosPage() {
           className="fixed inset-x-4 bottom-4 z-20 flex items-center justify-between rounded-2xl bg-ink-900 px-5 py-3.5 text-white shadow-lg lg:hidden"
         >
           <span className="text-sm font-semibold">
-            Voir le ticket ({cart.reduce((n, l) => n + l.quantity, 0)})
+            {t('Voir le ticket ({n})', { n: cart.reduce((n, l) => n + l.quantity, 0) })}
           </span>
           <span className="font-mono text-base font-extrabold">{total.toFixed(2)} MRU</span>
         </button>
       )}
 
-      <Modal open={Boolean(completedSale)} onClose={() => setCompletedSale(null)} title="Vente enregistrée">
+      <Modal open={Boolean(completedSale)} onClose={() => setCompletedSale(null)} title={t('Vente enregistrée')}>
         {completedSale && (
           <div className="flex flex-col gap-4">
             <div className="rounded-xl bg-green-50 p-4 text-center">
@@ -329,7 +330,7 @@ export default function PosPage() {
               </p>
               {completedSale.change !== null && (
                 <p className="mt-1 text-sm font-semibold text-green-700">
-                  Monnaie à rendre : {completedSale.change.toFixed(2)} MRU
+                  {t('Monnaie à rendre : {amount} MRU', { amount: completedSale.change.toFixed(2) })}
                 </p>
               )}
             </div>
@@ -339,10 +340,10 @@ export default function PosPage() {
                 onClick={() => downloadReceiptPdf(completedSale.order)}
                 className={`${btnGhost} inline-flex items-center gap-1.5`}
               >
-                <Printer className="h-4 w-4" /> Reçu PDF
+                <Printer className="h-4 w-4" /> {t('Reçu PDF')}
               </button>
               <button type="button" onClick={() => setCompletedSale(null)} className={btnDark}>
-                Nouvelle vente
+                {t('Nouvelle vente')}
               </button>
             </div>
           </div>

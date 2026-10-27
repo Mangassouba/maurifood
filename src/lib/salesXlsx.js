@@ -1,3 +1,4 @@
+import { getLocale, t } from '../i18n'
 const PAYMENT_LABELS = { cash: 'Espèces', card: 'Carte', mobile_money: 'Mobile money' }
 
 const BRAND = 'FFF7A30F'
@@ -24,7 +25,7 @@ export async function downloadSalesXlsx(sales, { restaurantName, periodLabel }) 
   const { default: ExcelJS } = await import('exceljs')
   const workbook = new ExcelJS.Workbook()
   workbook.creator = 'MauriFood'
-  const sheet = workbook.addWorksheet('Ventes', { views: [{ state: 'frozen', ySplit: 4 }] })
+  const sheet = workbook.addWorksheet(t('Ventes'), { views: [{ state: 'frozen', ySplit: 4 }] })
 
   sheet.columns = [
     { key: 'code', width: 14 },
@@ -37,17 +38,20 @@ export async function downloadSalesXlsx(sales, { restaurantName, periodLabel }) 
 
   sheet.mergeCells('A1:F1')
   const title = sheet.getCell('A1')
-  title.value = `${restaurantName || 'MauriFood'} — Ventes caisse`
+  title.value = `${restaurantName || 'MauriFood'} — ${t('Ventes caisse')}`
   title.font = { bold: true, size: 16, color: { argb: INK } }
   sheet.getRow(1).height = 26
 
   sheet.mergeCells('A2:F2')
   const subtitle = sheet.getCell('A2')
-  subtitle.value = `Période : ${periodLabel} · Exporté le ${new Date().toLocaleString('fr-FR')}`
+  subtitle.value = t('Période : {period} · Exporté le {date}', {
+    period: t(periodLabel),
+    date: new Date().toLocaleString(getLocale()),
+  })
   subtitle.font = { italic: true, color: { argb: 'FF8A8377' } }
 
   const header = sheet.getRow(4)
-  header.values = ['Code', 'Date', 'Client', 'Articles', 'Paiement', 'Total']
+  header.values = ['Code', 'Date', 'Client', 'Articles', 'Paiement', 'Total'].map((label) => t(label))
   header.height = 22
   header.eachCell((cell) => {
     cell.font = { bold: true, color: { argb: INK } }
@@ -62,8 +66,8 @@ export async function downloadSalesXlsx(sales, { restaurantName, periodLabel }) 
       code: sale.code,
       date: new Date(sale.createdAt),
       client: sale.guestName,
-      items: sale.items.map((i) => `${i.quantity} × ${i.dish?.name ?? 'Plat'}`).join(', '),
-      payment: PAYMENT_LABELS[sale.paymentMethod] ?? sale.paymentMethod,
+      items: sale.items.map((i) => `${i.quantity} × ${i.dish?.name ?? t('Plat')}`).join(', '),
+      payment: PAYMENT_LABELS[sale.paymentMethod] ? t(PAYMENT_LABELS[sale.paymentMethod]) : sale.paymentMethod,
       total: Number(sale.total),
     })
     row.getCell('date').numFmt = 'dd/mm/yyyy hh:mm'
@@ -82,10 +86,10 @@ export async function downloadSalesXlsx(sales, { restaurantName, periodLabel }) 
   sheet.addRow([])
   const grandTotal = sales.reduce((sum, s) => sum + Number(s.total), 0)
   const summaryRows = [
-    ['Nombre de ventes', sales.length],
-    ["Chiffre d'affaires", grandTotal],
+    [t('Nombre de ventes'), sales.length],
+    [t("Chiffre d'affaires"), grandTotal],
     ...Object.entries(PAYMENT_LABELS).map(([method, label]) => [
-      label,
+      t(label),
       sales.filter((s) => s.paymentMethod === method).reduce((sum, s) => sum + Number(s.total), 0),
     ]),
   ]

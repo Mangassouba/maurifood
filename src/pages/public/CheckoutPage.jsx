@@ -5,6 +5,7 @@ import { useCart } from '../../context/CartContext'
 import { addOrderToHistory } from '../../lib/orderHistory'
 import { btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 import api from '../../api/client'
+import { t } from '../../i18n'
 
 export default function CheckoutPage() {
   const { cart, subtotal, clearCart } = useCart()
@@ -43,11 +44,11 @@ export default function CheckoutPage() {
     setError('')
 
     if (!guestName.trim() || !guestPhone.trim()) {
-      setError('Veuillez indiquer votre nom et votre numéro de téléphone')
+      setError(t('Veuillez indiquer votre nom et votre numéro de téléphone'))
       return
     }
     if (effectiveOrderType === 'delivery' && !guestAddress.trim()) {
-      setError('Veuillez indiquer votre adresse de livraison')
+      setError(t('Veuillez indiquer votre adresse de livraison'))
       return
     }
 
@@ -73,7 +74,7 @@ export default function CheckoutPage() {
       clearCart()
       navigate(`/commandes/${order.code}`)
     } catch (err) {
-      setError(err.response?.data?.error ?? 'Impossible de créer la commande')
+      setError(err.response?.data?.error ?? t('Impossible de créer la commande'))
     } finally {
       setLoading(false)
     }
@@ -86,12 +87,12 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8 sm:px-6">
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Finaliser la commande</h1>
+      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Finaliser la commande')}</h1>
       <p className="mb-6 text-sm text-ink-400">{cart.restaurantName}</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div>
-          <p className="mb-2 text-sm font-bold text-ink-900">Type de commande</p>
+          <p className="mb-2 text-sm font-bold text-ink-900">{t('Type de commande')}</p>
           <div className="flex gap-2">
             <button
               type="button"
@@ -102,7 +103,7 @@ export default function CheckoutPage() {
                   : 'border border-ink-100 text-ink-600'
               }`}
             >
-              À emporter
+              {t('À emporter')}
             </button>
             {offersDelivery && (
               <button
@@ -114,21 +115,21 @@ export default function CheckoutPage() {
                     : 'border border-ink-100 text-ink-600'
                 }`}
               >
-                Livraison
+                {t('Livraison')}
               </button>
             )}
           </div>
           {!offersDelivery && (
             <p className="mt-2 text-xs text-ink-400">
-              Ce restaurant ne propose pas la livraison : commande à retirer sur place.
+              {t('Ce restaurant ne propose pas la livraison : commande à retirer sur place.')}
             </p>
           )}
         </div>
 
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-bold text-ink-900">Vos coordonnées</p>
+          <p className="text-sm font-bold text-ink-900">{t('Vos coordonnées')}</p>
           <input
-            placeholder="Nom complet"
+            placeholder={t('Nom complet')}
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
             className={inputClass}
@@ -136,7 +137,7 @@ export default function CheckoutPage() {
           />
           <input
             type="tel"
-            placeholder="Numéro de téléphone"
+            placeholder={t('Numéro de téléphone')}
             value={guestPhone}
             onChange={(e) => setGuestPhone(e.target.value)}
             className={inputClass}
@@ -144,7 +145,7 @@ export default function CheckoutPage() {
           />
           {effectiveOrderType === 'delivery' && (
             <textarea
-              placeholder="Adresse de livraison"
+              placeholder={t('Adresse de livraison')}
               value={guestAddress}
               onChange={(e) => setGuestAddress(e.target.value)}
               className={inputClass}
@@ -154,30 +155,30 @@ export default function CheckoutPage() {
         </div>
 
         <div className={`${cardClass} flex items-center justify-between`}>
-          <span className="font-semibold text-ink-600">Sous-total</span>
+          <span className="font-semibold text-ink-600">{t('Sous-total')}</span>
           <span className="text-lg font-extrabold text-ink-900">{subtotal} MRU</span>
         </div>
 
-        <p className="text-sm text-ink-400">Paiement à la livraison / au retrait (espèces).</p>
+        <p className="text-sm text-ink-400">{t('Paiement à la livraison / au retrait (espèces).')}</p>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex items-center gap-3">
           <button type="submit" disabled={loading} className={`${btnPrimary} flex-1`}>
-            {loading ? 'Envoi...' : 'Confirmer la commande'}
+            {loading ? t('Envoi...') : t('Confirmer la commande')}
           </button>
           <button type="button" onClick={() => setConfirmCancel(true)} className={btnGhost}>
-            Annuler
+            {t('Annuler')}
           </button>
         </div>
       </form>
 
       <ConfirmModal
         open={confirmCancel}
-        title="Annuler la commande ?"
-        message="Tous les plats de votre panier seront retirés."
-        confirmLabel="Vider le panier"
-        cancelLabel="Garder mon panier"
+        title={t('Annuler la commande ?')}
+        message={t('Tous les plats de votre panier seront retirés.')}
+        confirmLabel={t('Vider le panier')}
+        cancelLabel={t('Garder mon panier')}
         onConfirm={cancelOrder}
         onClose={() => setConfirmCancel(false)}
       />

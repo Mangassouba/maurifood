@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { btnDark, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -20,7 +21,7 @@ export default function LoginPage() {
       if (user.role === 'super_admin') navigate('/admin')
       else navigate('/dashboard')
     } catch {
-      setError('Identifiants invalides')
+      setError(t('Identifiants invalides'))
     } finally {
       setLoading(false)
     }
@@ -28,13 +29,13 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm px-4 py-16 sm:px-6">
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Espace restaurant</h1>
-      <p className="mb-6 text-sm text-ink-400">Connectez-vous pour gérer votre restaurant.</p>
+      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Espace restaurant')}</h1>
+      <p className="mb-6 text-sm text-ink-400">{t('Connectez-vous pour gérer votre restaurant.')}</p>
 
       <form onSubmit={handleSubmit} className={`${cardClass} flex flex-col gap-4`}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t('Email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={inputClass}
@@ -42,7 +43,7 @@ export default function LoginPage() {
         />
         <input
           type="password"
-          placeholder="Mot de passe"
+          placeholder={t('Mot de passe')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className={inputClass}
@@ -50,14 +51,14 @@ export default function LoginPage() {
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button type="submit" disabled={loading} className={btnDark}>
-          {loading ? 'Connexion...' : 'Se connecter'}
+          {loading ? t('Connexion...') : t('Se connecter')}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-500">
-        Vous gérez un restaurant ?{' '}
+        {t('Vous gérez un restaurant ?')}{' '}
         <Link to="/inscription" className="font-semibold text-brand-600 hover:underline">
-          Inscrivez-le
+          {t('Inscrivez-le')}
         </Link>
       </p>
     </div>

@@ -1,4 +1,5 @@
 import api from '../api/client'
+import { t } from '../i18n'
 
 const DEFAULT_MAX_SIZE = 1000
 const QUALITY = 0.82
@@ -21,7 +22,7 @@ async function resizeImage(file, maxSize) {
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('Conversion impossible'))),
+      (blob) => (blob ? resolve(blob) : reject(new Error(t('Conversion impossible')))),
       'image/jpeg',
       QUALITY,
     )
@@ -30,7 +31,7 @@ async function resizeImage(file, maxSize) {
 
 export async function uploadImage(file, { maxSize = DEFAULT_MAX_SIZE } = {}) {
   if (!file.type.startsWith('image/')) {
-    throw new Error('Le fichier doit être une image')
+    throw new Error(t('Le fichier doit être une image'))
   }
   const blob = await resizeImage(file, maxSize)
   const { data } = await api.post('/dashboard/images', blob, {

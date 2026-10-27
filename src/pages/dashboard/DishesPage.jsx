@@ -7,6 +7,7 @@ import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
 import { uploadImage } from '../../lib/imageUpload'
 import { badgeClass, btnDark, btnDanger, btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const EMPTY_FORM = { name: '', description: '', price: '', categoryId: '', imageUrl: '' }
 const PAGE_SIZE = 8
@@ -91,7 +92,7 @@ export default function DishesPage() {
       const imageUrl = await uploadImage(file)
       setForm((f) => ({ ...f, imageUrl }))
     } catch (err) {
-      setUploadError(err.response?.data?.error ?? err.message ?? "Échec de l'envoi de l'image")
+      setUploadError(err.response?.data?.error ?? err.message ?? t("Échec de l'envoi de l'image"))
     } finally {
       setUploading(false)
     }
@@ -134,7 +135,7 @@ export default function DishesPage() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <input
-            placeholder="Rechercher un plat..."
+            placeholder={t('Rechercher un plat...')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -151,7 +152,7 @@ export default function DishesPage() {
               }}
               className={`${inputClass} w-44 min-w-0 shrink`}
             >
-              <option value="all">Toutes les catégories</option>
+              <option value="all">{t('Toutes les catégories')}</option>
               {categories.map((c) => (
                 <option key={c.id} value={String(c.id)}>
                   {c.name}
@@ -166,28 +167,28 @@ export default function DishesPage() {
               }}
               className={`${inputClass} w-44 min-w-0 shrink`}
             >
-              <option value="all">Toutes disponibilités</option>
-              <option value="available">Disponible</option>
-              <option value="unavailable">Indisponible</option>
+              <option value="all">{t('Toutes disponibilités')}</option>
+              <option value="available">{t('Disponible')}</option>
+              <option value="unavailable">{t('Indisponible')}</option>
             </select>
           </div>
         </div>
         <button type="button" onClick={openCreate} className={btnPrimary}>
-          Nouveau plat
+          {t('Nouveau plat')}
         </button>
       </div>
 
-      <Modal open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Modifier le plat' : 'Nouveau plat'}>
+      <Modal open={showForm} onClose={() => setShowForm(false)} title={editingId ? t('Modifier le plat') : t('Nouveau plat')}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
-            placeholder="Nom du plat"
+            placeholder={t('Nom du plat')}
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             className={inputClass}
             required
           />
           <textarea
-            placeholder="Description"
+            placeholder={t('Description')}
             value={form.description}
             onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             className={inputClass}
@@ -195,7 +196,7 @@ export default function DishesPage() {
           <input
             type="number"
             step="0.01"
-            placeholder="Prix (MRU)"
+            placeholder={t('Prix (MRU)')}
             value={form.price}
             onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
             className={inputClass}
@@ -208,7 +209,7 @@ export default function DishesPage() {
               }`}
             >
               <ImageUp className="h-4 w-4" />
-              {uploading ? 'Envoi...' : 'Choisir une image'}
+              {uploading ? t('Envoi...') : t('Choisir une image')}
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
@@ -216,11 +217,11 @@ export default function DishesPage() {
                 className="hidden"
               />
             </label>
-            <span className="text-xs text-ink-400">ou collez une URL ci-dessous</span>
+            <span className="text-xs text-ink-400">{t('ou collez une URL ci-dessous')}</span>
           </div>
           {uploadError && <p className="text-sm font-semibold text-red-600">{uploadError}</p>}
           <input
-            placeholder="URL de l'image (optionnel)"
+            placeholder={t("URL de l'image (optionnel)")}
             value={form.imageUrl}
             onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
             className={inputClass}
@@ -229,7 +230,7 @@ export default function DishesPage() {
             <DishImage
               key={form.imageUrl}
               src={form.imageUrl.trim()}
-              alt="Aperçu du plat"
+              alt={t('Aperçu du plat')}
               className="h-32 w-full rounded-xl"
             />
           )}
@@ -239,7 +240,7 @@ export default function DishesPage() {
             onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
             className={inputClass}
           >
-            <option value="">Sans catégorie</option>
+            <option value="">{t('Sans catégorie')}</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -249,34 +250,34 @@ export default function DishesPage() {
 
           <div className="flex items-center gap-2">
             <input
-              placeholder="Nouvelle catégorie"
+              placeholder={t('Nouvelle catégorie')}
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               className={`${inputClass} flex-1`}
             />
             <button type="button" onClick={addCategory} className={btnGhost}>
-              Ajouter
+              {t('Ajouter')}
             </button>
           </div>
 
           <div className="flex items-center gap-3 pt-1">
             <button type="submit" disabled={uploading} className={btnDark}>
-              {editingId ? 'Enregistrer' : 'Créer'}
+              {editingId ? t('Enregistrer') : t('Créer')}
             </button>
             <button type="button" onClick={() => setShowForm(false)} className="text-sm text-ink-500">
-              Annuler
+              {t('Annuler')}
             </button>
           </div>
         </form>
       </Modal>
 
       <div className={`${cardClass} overflow-x-auto p-0`}>
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-start text-sm">
           <thead>
             <tr className="border-b border-ink-100 text-xs font-bold uppercase tracking-wide text-ink-400">
-              <th className="px-4 py-3">Nom</th>
-              <th className="px-4 py-3">Prix</th>
-              <th className="px-4 py-3">Disponible</th>
+              <th className="px-4 py-3">{t('Nom')}</th>
+              <th className="px-4 py-3">{t('Prix')}</th>
+              <th className="px-4 py-3">{t('Disponible')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -300,7 +301,7 @@ export default function DishesPage() {
                     onClick={() => toggleAvailable(dish)}
                     className={badgeClass(dish.isAvailable ? 'green' : 'ink')}
                   >
-                    {dish.isAvailable ? 'Oui' : 'Non'}
+                    {dish.isAvailable ? t('Oui') : t('Non')}
                   </button>
                 </td>
                 <td className="px-4 py-3">
@@ -310,10 +311,10 @@ export default function DishesPage() {
                       onClick={() => openEdit(dish)}
                       className="text-sm font-semibold text-ink-600 hover:text-ink-900"
                     >
-                      Modifier
+                      {t('Modifier')}
                     </button>
                     <button type="button" onClick={() => setDishToDelete(dish)} className={btnDanger}>
-                      Supprimer
+                      {t('Supprimer')}
                     </button>
                   </div>
                 </td>
@@ -322,16 +323,17 @@ export default function DishesPage() {
           </tbody>
         </table>
         {filteredDishes.length === 0 && (
-          <p className="px-4 py-6 text-ink-400">Aucun plat ne correspond à votre recherche.</p>
+          <p className="px-4 py-6 text-ink-400">{t('Aucun plat ne correspond à votre recherche.')}</p>
         )}
         <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredDishes.length} />
       </div>
 
       <ConfirmModal
         open={Boolean(dishToDelete)}
-        title="Supprimer ce plat ?"
+        title={t('Supprimer ce plat ?')}
         message={
-          dishToDelete && `« ${dishToDelete.name} » sera retiré de votre menu. Cette action est définitive.`
+          dishToDelete &&
+          t('« {name} » sera retiré de votre menu. Cette action est définitive.', { name: dishToDelete.name })
         }
         onConfirm={deleteDish}
         onClose={() => setDishToDelete(null)}

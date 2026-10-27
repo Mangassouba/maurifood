@@ -1,11 +1,12 @@
 import { btnGhost } from '../styles/ui'
+import { t } from '../i18n'
 
 export default function Pagination({ page, pageCount, onPageChange, total }) {
   if (pageCount <= 1) return null
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 px-4 py-3">
-      <span className="text-xs text-ink-400">{total} résultat{total > 1 ? 's' : ''}</span>
+      <span className="text-xs text-ink-400">{total > 1 ? t('{n} résultats', { n: total }) : t('{n} résultat', { n: total })}</span>
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -13,10 +14,10 @@ export default function Pagination({ page, pageCount, onPageChange, total }) {
           onClick={() => onPageChange(page - 1)}
           className={`${btnGhost} disabled:cursor-not-allowed disabled:opacity-40`}
         >
-          Précédent
+          {t('Précédent')}
         </button>
         <span className="text-sm text-ink-500">
-          Page {page} sur {pageCount}
+          {t('Page {page} sur {count}', { page, count: pageCount })}
         </span>
         <button
           type="button"
@@ -24,7 +25,7 @@ export default function Pagination({ page, pageCount, onPageChange, total }) {
           onClick={() => onPageChange(page + 1)}
           className={`${btnGhost} disabled:cursor-not-allowed disabled:opacity-40`}
         >
-          Suivant
+          {t('Suivant')}
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import ConfirmModal from '../components/ConfirmModal'
+import { t } from '../i18n'
 
 const CartContext = createContext(null)
 const STORAGE_KEY = 'maurifood_cart'
@@ -84,9 +85,12 @@ export function CartProvider({ children }) {
       {children}
       <ConfirmModal
         open={Boolean(pendingAdd)}
-        title="Changer de restaurant ?"
-        message={`Votre panier contient des plats de ${cart.restaurantName ?? 'un autre restaurant'}. Pour ajouter « ${pendingAdd?.dish.name ?? ''} », il faut vider le panier.`}
-        confirmLabel="Vider et ajouter"
+        title={t('Changer de restaurant ?')}
+        message={t('Votre panier contient des plats de {restaurant}. Pour ajouter « {dish} », il faut vider le panier.', {
+          restaurant: cart.restaurantName ?? t('un autre restaurant'),
+          dish: pendingAdd?.dish.name ?? '',
+        })}
+        confirmLabel={t('Vider et ajouter')}
         tone="primary"
         onConfirm={confirmReplaceCart}
         onClose={() => setPendingAdd(null)}

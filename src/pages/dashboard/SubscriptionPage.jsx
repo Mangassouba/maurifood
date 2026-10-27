@@ -3,6 +3,7 @@ import { CreditCard } from 'lucide-react'
 import api from '../../api/client'
 import { formatSubscriptionDate as formatDate, remainingLabel } from '../../lib/subscription'
 import { badgeClass, btnPrimary, cardClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const STATUS_TONE = {
   trialing: 'brand',
@@ -59,15 +60,15 @@ export default function SubscriptionPage() {
               <CreditCard className="h-6 w-6 text-brand-700" />
             </span>
             <div>
-              <p className="font-bold text-ink-900">Plan actuel : {subscription.plan?.name}</p>
+              <p className="font-bold text-ink-900">{t('Plan actuel : {plan}', { plan: subscription.plan?.name })}</p>
               <span className={`${badgeClass(STATUS_TONE[subscription.status] ?? 'ink')} mt-1`}>
-                {STATUS_LABELS[subscription.status] ?? subscription.status}
+                {STATUS_LABELS[subscription.status] ? t(STATUS_LABELS[subscription.status]) : subscription.status}
               </span>
               {(subscription.currentPeriodStart || subscription.currentPeriodEnd) && (
                 <p className="mt-2 text-sm text-ink-500">
                   {subscription.currentPeriodStart && (
                     <>
-                      Du{' '}
+                      {t('Du')}{' '}
                       <strong className="text-ink-900">
                         {formatDate(subscription.currentPeriodStart)}
                       </strong>{' '}
@@ -75,7 +76,7 @@ export default function SubscriptionPage() {
                   )}
                   {subscription.currentPeriodEnd && (
                     <>
-                      {subscription.currentPeriodStart ? 'au' : "Jusqu'au"}{' '}
+                      {subscription.currentPeriodStart ? t('au') : t("Jusqu'au")}{' '}
                       <strong className="text-ink-900">
                         {formatDate(subscription.currentPeriodEnd)}
                       </strong>{' '}
@@ -88,13 +89,13 @@ export default function SubscriptionPage() {
           </div>
         ) : (
           <p className="text-ink-400">
-            Aucun abonnement actif. Contactez l'administrateur pour activer votre compte.
+            {t("Aucun abonnement actif. Contactez l'administrateur pour activer votre compte.")}
           </p>
         )}
       </div>
 
       <div>
-        <h2 className="mb-3 text-lg font-extrabold text-ink-900">Nos formules</h2>
+        <h2 className="mb-3 text-lg font-extrabold text-ink-900">{t('Nos formules')}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {plans.map((plan) => {
             const isCurrent = subscription?.plan?.id === plan.id
@@ -125,7 +126,7 @@ export default function SubscriptionPage() {
                 </p>
                 <p className={`text-xs ${isSelected ? 'text-white/60' : 'text-ink-400'}`}>MRU</p>
                 {isCurrent && !isSelected && (
-                  <span className={`${badgeClass('brand')} mt-2`}>Formule actuelle</span>
+                  <span className={`${badgeClass('brand')} mt-2`}>{t('Formule actuelle')}</span>
                 )}
               </button>
             )
@@ -134,11 +135,11 @@ export default function SubscriptionPage() {
       </div>
 
       <div className={cardClass}>
-        <p className="mb-2 text-sm font-bold text-ink-900">Paiement</p>
+        <p className="mb-2 text-sm font-bold text-ink-900">{t('Paiement')}</p>
         <p className="text-sm text-ink-500">
-          Choisissez votre formule ci-dessus puis envoyez le montant correspondant via{' '}
-          <strong className="text-ink-900">Bankily</strong> ou{' '}
-          <strong className="text-ink-900">Masrivi</strong> au numéro{' '}
+          {t('Choisissez votre formule ci-dessus puis envoyez le montant correspondant via')}{' '}
+          <strong className="text-ink-900">Bankily</strong> {t('ou')}{' '}
+          <strong className="text-ink-900">Masrivi</strong> {t('au numéro')}{' '}
           <strong className="text-ink-900">{PAYMENT_NUMBER}</strong>.
         </p>
 
@@ -148,12 +149,11 @@ export default function SubscriptionPage() {
           disabled={!selectedPlanId || sending}
           className={`${btnPrimary} mt-4`}
         >
-          {sending ? 'Envoi...' : "J'ai payé, demander l'activation"}
+          {sending ? t('Envoi...') : t("J'ai payé, demander l'activation")}
         </button>
         {sent && (
           <p className="mt-2 text-sm text-green-700">
-            Demande envoyée à l'administrateur. Votre abonnement sera activé après vérification
-            du paiement.
+            {t("Demande envoyée à l'administrateur. Votre abonnement sera activé après vérification du paiement.")}
           </p>
         )}
       </div>

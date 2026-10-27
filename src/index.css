@@ -32,3 +32,8 @@ body {
   font-family: var(--font-sans);
   color: var(--color-ink-900);
 }
+
+/* L'arabe utilise Cairo (Manrope n'a pas de glyphes arabes) */
+html[lang='ar'] body {
+  font-family: "Cairo", var(--font-sans);
+}

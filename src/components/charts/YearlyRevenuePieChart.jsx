@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { cardClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 const RAMP = ['#ffe08a', '#ffcb4d', '#ffb92b', '#f7a30f', '#d98407', '#b3660a']
 const SIZE = 160
@@ -8,7 +9,7 @@ const CX = SIZE / 2
 const CY = SIZE / 2
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 function polarToCartesian(cx, cy, r, angleDeg) {
@@ -47,10 +48,10 @@ export default function YearlyRevenuePieChart({ data }) {
 
   return (
     <div className={cardClass}>
-      <h3 className="font-bold text-ink-900">Chiffre d'affaires par année</h3>
+      <h3 className="font-bold text-ink-900">{t("Chiffre d'affaires par année")}</h3>
 
       {total === 0 ? (
-        <p className="mt-6 text-sm text-ink-400">Aucune vente pour le moment.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucune vente pour le moment.')}</p>
       ) : (
         <div className="mt-4 flex flex-wrap items-center gap-6">
           <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="h-40 w-40 shrink-0">

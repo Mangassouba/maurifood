@@ -1,4 +1,5 @@
 import { cardClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const STATUS_LABELS = {
   trialing: "À l'essai",
@@ -22,15 +23,15 @@ export default function SubscriptionStatusChart({ data }) {
 
   return (
     <div className={cardClass}>
-      <h3 className="font-bold text-ink-900">Restaurants par statut d'abonnement</h3>
+      <h3 className="font-bold text-ink-900">{t("Restaurants par statut d'abonnement")}</h3>
 
       {total === 0 ? (
-        <p className="mt-6 text-sm text-ink-400">Aucun restaurant pour le moment.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucun restaurant pour le moment.')}</p>
       ) : (
         <div className="mt-4 flex flex-col gap-3">
           {data.map((d) => (
             <div key={d.status} className="flex items-center gap-3">
-              <span className="w-36 shrink-0 text-sm text-ink-600">{STATUS_LABELS[d.status]}</span>
+              <span className="w-36 shrink-0 text-sm text-ink-600">{t(STATUS_LABELS[d.status])}</span>
               <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-ink-100">
                 <div
                   className="h-full rounded-full"
@@ -40,7 +41,7 @@ export default function SubscriptionStatusChart({ data }) {
                   }}
                 />
               </div>
-              <span className="w-6 shrink-0 text-right text-sm font-semibold text-ink-900">
+              <span className="w-6 shrink-0 text-end text-sm font-semibold text-ink-900">
                 {d.count}
               </span>
             </div>

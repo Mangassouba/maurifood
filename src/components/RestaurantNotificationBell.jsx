@@ -2,16 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, ClipboardList, CreditCard } from 'lucide-react'
 import api from '../api/client'
+import { getLocale, t } from '../i18n'
 
 const REFRESH_MS = 30 * 1000
 
 function timeAgo(value) {
   const minutes = Math.floor((Date.now() - new Date(value)) / 60000)
-  if (minutes < 1) return "à l'instant"
-  if (minutes < 60) return `il y a ${minutes} min`
+  if (minutes < 1) return t("à l'instant")
+  if (minutes < 60) return t('il y a {n} min', { n: minutes })
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `il y a ${hours} h`
-  return new Date(value).toLocaleDateString('fr-FR')
+  if (hours < 24) return t('il y a {n} h', { n: hours })
+  return new Date(value).toLocaleDateString(getLocale())
 }
 
 export default function RestaurantNotificationBell() {
@@ -63,32 +64,32 @@ export default function RestaurantNotificationBell() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="relative flex h-9 w-9 items-center justify-center rounded-full text-ink-600 hover:bg-ink-50"
-        aria-label="Notifications"
+        aria-label={t('Notifications')}
       >
         <Bell className="h-[18px] w-[18px]" />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 z-30 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-2 shadow-lg">
+        <div className="absolute end-0 z-30 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-2 shadow-lg">
           <div className="flex items-center justify-between px-2 py-1.5">
-            <p className="text-xs font-bold uppercase tracking-wide text-ink-400">Notifications</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-ink-400">{t('Notifications')}</p>
             {unreadCount > 0 && (
               <button
                 type="button"
                 onClick={markAllRead}
                 className="text-xs font-semibold text-brand-600 hover:underline"
               >
-                Tout marquer comme lu
+                {t('Tout marquer comme lu')}
               </button>
             )}
           </div>
           {notifications.length === 0 && (
-            <p className="px-2 py-3 text-sm text-ink-400">Aucune notification.</p>
+            <p className="px-2 py-3 text-sm text-ink-400">{t('Aucune notification.')}</p>
           )}
           <div className="flex max-h-80 flex-col gap-1 overflow-y-auto">
             {notifications.map((n) => {
@@ -98,7 +99,7 @@ export default function RestaurantNotificationBell() {
                   key={n.id}
                   type="button"
                   onClick={() => openNotification(n)}
-                  className={`flex gap-2.5 rounded-xl p-2.5 text-left text-sm transition ${
+                  className={`flex gap-2.5 rounded-xl p-2.5 text-start text-sm transition ${
                     n.isRead ? 'text-ink-400 hover:bg-ink-50' : 'bg-brand-50 text-ink-900 hover:bg-brand-100'
                   }`}
                 >

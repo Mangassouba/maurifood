@@ -8,9 +8,21 @@ import {
   remainingLabel,
 } from '../../lib/subscription'
 import { badgeClass, btnDark, btnGhost, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const STATUS_OPTIONS = ['trialing', 'active', 'past_due', 'cancelled']
 const PAGE_SIZE = 8
+
+const SUB_STATUS_LABELS = {
+  trialing: "À l'essai",
+  active: 'Actif',
+  past_due: 'Paiement en retard',
+  cancelled: 'Annulé',
+}
+
+function subStatusLabel(status) {
+  return SUB_STATUS_LABELS[status] ? t(SUB_STATUS_LABELS[status]) : status
+}
 
 export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState([])
@@ -118,7 +130,7 @@ export default function RestaurantsPage() {
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <input
-          placeholder="Rechercher un restaurant..."
+          placeholder={t('Rechercher un restaurant...')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -134,9 +146,9 @@ export default function RestaurantsPage() {
           }}
           className={`${inputClass} w-36 shrink-0`}
         >
-          <option value="all">Actif et inactif</option>
-          <option value="active">Actif</option>
-          <option value="inactive">Inactif</option>
+          <option value="all">{t('Actif et inactif')}</option>
+          <option value="active">{t('Actif')}</option>
+          <option value="inactive">{t('Inactif')}</option>
         </select>
         <select
           value={statusFilter}
@@ -146,10 +158,10 @@ export default function RestaurantsPage() {
           }}
           className={`${inputClass} w-36 shrink-0`}
         >
-          <option value="all">Tous les abonnements</option>
+          <option value="all">{t('Tous les abonnements')}</option>
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {subStatusLabel(s)}
             </option>
           ))}
         </select>
@@ -163,19 +175,26 @@ export default function RestaurantsPage() {
                 <div className="flex items-center gap-2">
                   <p className="font-bold text-ink-900">{r.name}</p>
                   <span className={badgeClass(r.isActive ? 'green' : 'ink')}>
-                    {r.isActive ? 'Actif' : 'Inactif'}
+                    {r.isActive ? t('Actif') : t('Inactif')}
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-ink-500">
-                  Plan : {r.subscription?.plan?.name ?? 'Aucun'} · Statut abo. :{' '}
-                  {r.subscription?.status ?? '-'}
+                  {t('Plan : {plan} · Statut abo. : {status}', {
+                    plan: r.subscription?.plan?.name ?? t('Aucun'),
+                    status: r.subscription?.status ? subStatusLabel(r.subscription.status) : '-',
+                  })}
                 </p>
                 {r.subscription?.currentPeriodEnd && (
                   <p className="mt-0.5 text-sm text-ink-500">
-                    {r.subscription.currentPeriodStart &&
-                      `Du ${formatSubscriptionDate(r.subscription.currentPeriodStart)} `}
-                    {r.subscription.currentPeriodStart ? 'au' : "Jusqu'au"}{' '}
-                    {formatSubscriptionDate(r.subscription.currentPeriodEnd)} ·{' '}
+                    {r.subscription.currentPeriodStart
+                      ? t('Du {start} au {end}', {
+                          start: formatSubscriptionDate(r.subscription.currentPeriodStart),
+                          end: formatSubscriptionDate(r.subscription.currentPeriodEnd),
+                        })
+                      : t("Jusqu'au {end}", {
+                          end: formatSubscriptionDate(r.subscription.currentPeriodEnd),
+                        })}{' '}
+                    ·{' '}
                     <span
                       className={
                         isSubscriptionExpired(r.subscription)
@@ -189,11 +208,14 @@ export default function RestaurantsPage() {
                 )}
                 {pendingRequests[r.id] && (
                   <span className={`${badgeClass('brand')} mt-1`}>
-                    Demande en attente : {pendingRequests[r.id].plan?.name}
+                    {t('Demande en attente : {plan}', { plan: pendingRequests[r.id].plan?.name })}
                   </span>
                 )}
                 <p className="mt-0.5 text-sm text-ink-500">
-                  Tél. : {r.phone || '-'} · Adresse : {r.address || '-'}
+                  {t('Tél. : {phone} · Adresse : {address}', {
+                    phone: r.phone || '-',
+                    address: r.address || '-',
+                  })}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -202,17 +224,17 @@ export default function RestaurantsPage() {
                   onClick={() => toggleActive(r)}
                   className={r.isActive ? btnGhost : btnDark}
                 >
-                  {r.isActive ? 'Désactiver' : 'Activer'}
+                  {r.isActive ? t('Désactiver') : t('Activer')}
                 </button>
                 <button type="button" onClick={() => startEditSubscription(r)} className={btnGhost}>
-                  Abonnement
+                  {t('Abonnement')}
                 </button>
               </div>
             </div>
           </div>
         ))}
         {filteredRestaurants.length === 0 && (
-          <p className="text-ink-400">Aucun restaurant ne correspond à votre recherche.</p>
+          <p className="text-ink-400">{t('Aucun restaurant ne correspond à votre recherche.')}</p>
         )}
       </div>
 
@@ -230,12 +252,12 @@ export default function RestaurantsPage() {
       <Modal
         open={Boolean(editingRestaurant)}
         onClose={() => setEditingId(null)}
-        title={editingRestaurant ? `Abonnement — ${editingRestaurant.name}` : ''}
+        title={editingRestaurant ? t('Abonnement — {name}', { name: editingRestaurant.name }) : ''}
       >
         <div className="flex flex-col gap-3">
           {editingRestaurant?.subscription?.currentPeriodEnd && (
             <p className="text-sm text-ink-500">
-              Période actuelle : jusqu'au{' '}
+              {t("Période actuelle : jusqu'au")}{' '}
               <strong className="text-ink-900">
                 {formatSubscriptionDate(editingRestaurant.subscription.currentPeriodEnd)}
               </strong>{' '}
@@ -260,13 +282,13 @@ export default function RestaurantsPage() {
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {subStatusLabel(s)}
               </option>
             ))}
           </select>
           {editingRestaurant && pendingRequests[editingRestaurant.id] && (
             <p className="text-sm text-ink-500">
-              Formule demandée par le restaurant :{' '}
+              {t('Formule demandée par le restaurant :')}{' '}
               <strong className="text-ink-900">
                 {pendingRequests[editingRestaurant.id].plan?.name}
               </strong>
@@ -281,27 +303,30 @@ export default function RestaurantsPage() {
                 className="mt-0.5 h-4 w-4 accent-ink-900"
               />
               <span>
-                <span className="font-semibold text-ink-900">Prolonger la période</span>
+                <span className="font-semibold text-ink-900">{t('Prolonger la période')}</span>
                 <span className="block text-ink-500">
                   {form.renew
-                    ? `${selectedPlan.durationMonths} mois ${
-                        currentEnd && new Date(currentEnd) > new Date()
-                          ? `ajoutés après le ${formatSubscriptionDate(currentEnd)}`
-                          : "à partir d'aujourd'hui"
-                      }.`
+                    ? currentEnd && new Date(currentEnd) > new Date()
+                      ? t('{n} mois ajoutés après le {date}.', {
+                          n: selectedPlan.durationMonths,
+                          date: formatSubscriptionDate(currentEnd),
+                        })
+                      : t("{n} mois à partir d'aujourd'hui.", { n: selectedPlan.durationMonths })
                     : currentEnd
-                      ? `Les dates actuelles sont conservées (fin le ${formatSubscriptionDate(currentEnd)}).`
-                      : 'Aucune période ne sera définie.'}
+                      ? t('Les dates actuelles sont conservées (fin le {date}).', {
+                          date: formatSubscriptionDate(currentEnd),
+                        })
+                      : t('Aucune période ne sera définie.')}
                 </span>
               </span>
             </label>
           )}
           <div className="flex items-center gap-3 pt-1">
             <button type="button" onClick={() => saveSubscription(editingId)} className={btnDark}>
-              Enregistrer
+              {t('Enregistrer')}
             </button>
             <button type="button" onClick={() => setEditingId(null)} className="text-sm text-ink-500">
-              Annuler
+              {t('Annuler')}
             </button>
           </div>
         </div>

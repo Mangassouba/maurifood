@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Modal from './Modal'
+import { t } from '../i18n'
 
 // Fenêtre de confirmation (suppression, vidage du panier...).
 // `onConfirm` peut être asynchrone : la fenêtre se ferme une fois l'action réussie,
@@ -8,8 +9,8 @@ export default function ConfirmModal({
   open,
   title,
   message,
-  confirmLabel = 'Supprimer',
-  cancelLabel = 'Annuler',
+  confirmLabel,
+  cancelLabel,
   tone = 'danger',
   onConfirm,
   onClose,
@@ -31,7 +32,7 @@ export default function ConfirmModal({
       setBusy(false)
       onClose()
     } catch (err) {
-      setError(err.response?.data?.error ?? 'Une erreur est survenue, veuillez réessayer')
+      setError(err.response?.data?.error ?? t('Une erreur est survenue, veuillez réessayer'))
       setBusy(false)
     }
   }
@@ -48,7 +49,7 @@ export default function ConfirmModal({
             disabled={busy}
             className="text-sm font-semibold text-ink-500 hover:text-ink-700 disabled:opacity-50"
           >
-            {cancelLabel}
+            {cancelLabel ?? t('Annuler')}
           </button>
           <button
             type="button"
@@ -60,7 +61,7 @@ export default function ConfirmModal({
                 : 'bg-brand-500 text-ink-900 hover:bg-brand-400'
             }`}
           >
-            {busy ? 'Patientez...' : confirmLabel}
+            {busy ? t('Patientez...') : (confirmLabel ?? t('Supprimer'))}
           </button>
         </div>
       </div>

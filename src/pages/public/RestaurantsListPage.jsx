@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapPin, Phone } from 'lucide-react'
 import api from '../../api/client'
+import { t } from '../../i18n'
 
 export default function RestaurantsListPage() {
   const [restaurants, setRestaurants] = useState([])
@@ -17,13 +18,13 @@ export default function RestaurantsListPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Restaurants</h1>
-      <p className="mb-6 text-sm text-ink-400">Choisissez un restaurant pour voir son menu.</p>
+      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Restaurants')}</h1>
+      <p className="mb-6 text-sm text-ink-400">{t('Choisissez un restaurant pour voir son menu.')}</p>
 
-      {loading && <p className="text-ink-400">Chargement...</p>}
+      {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
 
       {!loading && restaurants.length === 0 && (
-        <p className="text-ink-400">Aucun restaurant disponible pour le moment.</p>
+        <p className="text-ink-400">{t('Aucun restaurant disponible pour le moment.')}</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -63,7 +64,9 @@ export default function RestaurantsListPage() {
                 </p>
               )}
               <p className="mt-1 text-xs font-semibold text-brand-600">
-                {restaurant.dishCount} {restaurant.dishCount > 1 ? 'plats' : 'plat'}
+                {restaurant.dishCount > 1
+                  ? t('{n} plats', { n: restaurant.dishCount })
+                  : t('{n} plat', { n: restaurant.dishCount })}
               </p>
             </div>
           </Link>

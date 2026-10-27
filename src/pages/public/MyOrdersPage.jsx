@@ -2,17 +2,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { loadOrderHistory } from '../../lib/orderHistory'
 import { cardClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 export default function MyOrdersPage() {
   const [orders] = useState(loadOrderHistory)
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8 sm:px-6">
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Mes commandes</h1>
-      <p className="mb-6 text-sm text-ink-400">Historique conservé sur cet appareil.</p>
+      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Mes commandes')}</h1>
+      <p className="mb-6 text-sm text-ink-400">{t('Historique conservé sur cet appareil.')}</p>
 
       {orders.length === 0 && (
-        <p className="text-ink-400">Aucune commande passée depuis cet appareil pour le moment.</p>
+        <p className="text-ink-400">{t('Aucune commande passée depuis cet appareil pour le moment.')}</p>
       )}
 
       <div className="flex flex-col gap-3">

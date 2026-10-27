@@ -7,9 +7,10 @@ import StatusBreakdownChart from '../../components/charts/StatusBreakdownChart'
 import TopDishesChart from '../../components/charts/TopDishesChart'
 import MonthlyRevenueChart from '../../components/charts/MonthlyRevenueChart'
 import YearlyRevenuePieChart from '../../components/charts/YearlyRevenuePieChart'
+import { getLocale, t } from '../../i18n'
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 export default function DashboardHome() {
@@ -29,26 +30,25 @@ export default function DashboardHome() {
           <Smile className="h-6 w-6 text-brand-700" />
         </span>
         <p className="text-ink-500">
-          Bienvenue dans l'espace de gestion de votre restaurant. Utilisez le menu pour gérer vos
-          plats, suivre vos commandes et vos livraisons.
+          {t("Bienvenue dans l'espace de gestion de votre restaurant. Utilisez le menu pour gérer vos plats, suivre vos commandes et vos livraisons.")}
         </p>
       </div>
 
       {stats && (
         <>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatCard icon={Receipt} label="Commandes totales" value={stats.summary.totalOrders} />
+            <StatCard icon={Receipt} label={t('Commandes totales')} value={stats.summary.totalOrders} />
             <StatCard
               icon={Wallet}
-              label="Chiffre d'affaires"
+              label={t("Chiffre d'affaires")}
               value={formatMoney(stats.summary.totalRevenue)}
             />
             <StatCard
               icon={Calculator}
-              label="Panier moyen"
+              label={t('Panier moyen')}
               value={formatMoney(stats.summary.avgOrderValue)}
             />
-            <StatCard icon={Clock} label="Commandes en cours" value={stats.summary.pendingOrders} />
+            <StatCard icon={Clock} label={t('Commandes en cours')} value={stats.summary.pendingOrders} />
           </div>
 
           <RevenueTrendChart data={stats.revenueByDay} />

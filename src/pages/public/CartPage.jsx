@@ -6,6 +6,7 @@ import ConfirmModal from '../../components/ConfirmModal'
 import DishImage from '../../components/DishImage'
 import QuantityStepper from '../../components/QuantityStepper'
 import { cardClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 export default function CartPage() {
   const { cart, updateQuantity, clearCart, subtotal } = useCart()
@@ -18,12 +19,12 @@ export default function CartPage() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-100">
           <ShoppingCart className="h-7 w-7 text-brand-700" />
         </div>
-        <p className="text-ink-500">Votre panier est vide.</p>
+        <p className="text-ink-500">{t('Votre panier est vide.')}</p>
         <Link
           to="/"
           className="mt-4 inline-block rounded-full bg-ink-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-ink-700"
         >
-          Voir les plats
+          {t('Voir les plats')}
         </Link>
       </div>
     )
@@ -38,7 +39,7 @@ export default function CartPage() {
     <div className="mx-auto max-w-2xl px-4 py-6 sm:px-6">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="mb-1 text-2xl font-extrabold text-ink-900">Votre panier</h1>
+          <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Votre panier')}</h1>
           <p className="text-sm text-ink-400">{cart.restaurantName}</p>
         </div>
         <button
@@ -46,7 +47,7 @@ export default function CartPage() {
           onClick={() => setConfirmCancel(true)}
           className="shrink-0 text-sm font-semibold text-red-600 hover:text-red-700"
         >
-          Annuler la commande
+          {t('Annuler la commande')}
         </button>
       </div>
 
@@ -73,7 +74,7 @@ export default function CartPage() {
 
       <div className={`${cardClass} mt-6`}>
         <div className="mb-3 flex items-center justify-between">
-          <span className="font-semibold text-ink-600">Sous-total</span>
+          <span className="font-semibold text-ink-600">{t('Sous-total')}</span>
           <span className="text-lg font-extrabold text-ink-900">{subtotal} MRU</span>
         </div>
         <button
@@ -81,16 +82,16 @@ export default function CartPage() {
           onClick={() => navigate('/checkout')}
           className="w-full rounded-full bg-brand-500 py-3 text-sm font-bold text-ink-900 shadow-md transition hover:bg-brand-400"
         >
-          Commander
+          {t('Commander')}
         </button>
       </div>
 
       <ConfirmModal
         open={confirmCancel}
-        title="Annuler la commande ?"
-        message="Tous les plats de votre panier seront retirés."
-        confirmLabel="Vider le panier"
-        cancelLabel="Garder mon panier"
+        title={t('Annuler la commande ?')}
+        message={t('Tous les plats de votre panier seront retirés.')}
+        confirmLabel={t('Vider le panier')}
+        cancelLabel={t('Garder mon panier')}
         onConfirm={cancelOrder}
         onClose={() => setConfirmCancel(false)}
       />

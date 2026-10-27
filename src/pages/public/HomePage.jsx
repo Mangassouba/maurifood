@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
+import { t } from '../../i18n'
 
 export default function HomePage() {
   const [dishes, setDishes] = useState([])
@@ -49,7 +50,7 @@ export default function HomePage() {
       {/* Search */}
       <div className="relative mb-6">
         <svg
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-400"
+          className="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-ink-400"
           width="18"
           height="18"
           viewBox="0 0 24 24"
@@ -66,33 +67,33 @@ export default function HomePage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher un plat..."
-          className="w-full rounded-2xl border border-ink-100 bg-white py-3 pl-11 pr-4 text-sm shadow-sm outline-none focus:ring-2 focus:ring-brand-300"
+          placeholder={t('Rechercher un plat...')}
+          className="w-full rounded-2xl border border-ink-100 bg-white py-3 ps-11 pe-4 text-sm shadow-sm outline-none focus:ring-2 focus:ring-brand-300"
         />
       </div>
 
       {/* Promo banner */}
       <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-400 to-brand-600 px-6 py-8">
-        <div className="absolute -bottom-10 -right-8 h-40 w-40 rounded-full bg-white/15" />
-        <div className="absolute -right-2 top-4 h-16 w-16 rounded-full bg-white/10" />
+        <div className="absolute -bottom-10 -end-8 h-40 w-40 rounded-full bg-white/15" />
+        <div className="absolute -end-2 top-4 h-16 w-16 rounded-full bg-white/10" />
         <p className="relative text-xs font-bold uppercase tracking-wide text-ink-900/70">
-          Offre limitée
+          {t('Offre limitée')}
         </p>
         <h2 className="relative mt-1 max-w-xs text-2xl font-extrabold text-ink-900 sm:text-3xl">
-          -20% sur votre première commande
+          {t('-20% sur votre première commande')}
         </h2>
         <button
           type="button"
           className="relative mt-4 rounded-full bg-ink-900 px-5 py-2 text-sm font-bold text-white transition hover:bg-ink-700"
         >
-          Commander
+          {t('Commander')}
         </button>
       </div>
 
       {/* Categories */}
       {categories.length > 0 && (
         <div className="mb-8">
-          <h3 className="mb-3 text-lg font-extrabold text-ink-900">Catégories</h3>
+          <h3 className="mb-3 text-lg font-extrabold text-ink-900">{t('Catégories')}</h3>
           <div className="flex gap-2 overflow-x-auto pb-1">
             <button
               type="button"
@@ -103,7 +104,7 @@ export default function HomePage() {
                   : 'bg-white text-ink-600 border border-ink-100'
               }`}
             >
-              Tout
+              {t('Tout')}
             </button>
             {categories.map((cat) => (
               <button
@@ -125,12 +126,12 @@ export default function HomePage() {
 
       {/* Popular food */}
       <div>
-        <h3 className="mb-4 text-lg font-extrabold text-ink-900">Plats populaires</h3>
+        <h3 className="mb-4 text-lg font-extrabold text-ink-900">{t('Plats populaires')}</h3>
 
-        {loading && <p className="text-ink-400">Chargement...</p>}
+        {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
 
         {!loading && filteredDishes.length === 0 && (
-          <p className="text-ink-400">Aucun plat disponible pour le moment.</p>
+          <p className="text-ink-400">{t('Aucun plat disponible pour le moment.')}</p>
         )}
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

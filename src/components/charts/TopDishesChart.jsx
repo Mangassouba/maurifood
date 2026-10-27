@@ -1,7 +1,8 @@
 import { cardClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 export default function TopDishesChart({ data }) {
@@ -9,10 +10,10 @@ export default function TopDishesChart({ data }) {
 
   return (
     <div className={cardClass}>
-      <h3 className="font-bold text-ink-900">Plats les plus vendus</h3>
+      <h3 className="font-bold text-ink-900">{t('Plats les plus vendus')}</h3>
 
       {data.length === 0 ? (
-        <p className="mt-6 text-sm text-ink-400">Aucune vente pour le moment.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucune vente pour le moment.')}</p>
       ) : (
         <div className="mt-4 flex flex-col gap-3">
           {data.map((d) => (
@@ -26,10 +27,10 @@ export default function TopDishesChart({ data }) {
                   style={{ width: `${(d.quantity / max) * 100}%` }}
                 />
               </div>
-              <span className="w-12 shrink-0 text-right text-sm font-semibold text-ink-900">
+              <span className="w-12 shrink-0 text-end text-sm font-semibold text-ink-900">
                 {d.quantity}×
               </span>
-              <span className="w-24 shrink-0 text-right text-xs text-ink-400">
+              <span className="w-24 shrink-0 text-end text-xs text-ink-400">
                 {formatMoney(d.revenue)}
               </span>
             </div>

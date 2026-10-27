@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf'
+import { getLang, getLocale, tIn } from '../i18n'
 import { statusLabel } from './orderStatus'
 
 // Format ticket de caisse (80 mm de large), hauteur calculée selon le contenu.
@@ -15,13 +16,18 @@ const GREEN = [21, 128, 61]
 
 const PAYMENT_LABELS = { cash: 'Espèces', card: 'Carte', mobile_money: 'Mobile money' }
 
+// Les polices intégrées de jsPDF n'ont pas de glyphes arabes : le reçu passe alors en français.
+function receiptLang() {
+  return getLang() === 'ar' ? 'fr' : getLang()
+}
+
 function money(value) {
   return `${Number(value).toFixed(2)} MRU`
 }
 
-function orderTypeLabel(order) {
-  if (order.source === 'pos') return 'Vente au comptoir'
-  return order.orderType === 'delivery' ? 'Livraison' : 'À emporter'
+function orderTypeLabel(order, lang) {
+  if (order.source === 'pos') return tIn(lang, 'Vente au comptoir')
+  return tIn(lang, order.orderType === 'delivery' ? 'Livraison' : 'À emporter')
 }
 
 function dashedLine(doc, y) {
@@ -35,6 +41,8 @@ function dashedLine(doc, y) {
 // Dessine le reçu et renvoie la hauteur utilisée : appelé une première fois
 // pour mesurer, puis sur le document final à la bonne hauteur.
 function drawReceipt(doc, order) {
+  const lang = receiptLang()
+  const tr = (text, vars) => tIn(lang, text, vars)
   const created = new Date(order.createdAt)
   let y = 0
 
@@ -47,7 +55,7 @@ function drawReceipt(doc, order) {
   doc.text('MauriFood', CENTER, 28, { align: 'center' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
-  doc.text(order.source === 'pos' ? 'TICKET DE CAISSE' : 'REÇU DE COMMANDE', CENTER, 41, {
+  doc.text(tr(order.source === 'pos' ? 'TICKET DE CAISSE' : 'REÇU DE COMMANDE'), CENTER, 41, {
     align: 'center',
   })
   y = 72
@@ -81,14 +89,14 @@ function drawReceipt(doc, order) {
 
   // Informations
   const infos = [
-    ['Date', created.toLocaleDateString('fr-FR')],
-    ['Heure', created.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })],
-    ['Client', order.guestName],
-    ...(order.guestPhone ? [['Téléphone', order.guestPhone]] : []),
-    ['Type', orderTypeLabel(order)],
+    [tr('Date'), created.toLocaleDateString(getLocale(lang))],
+    [tr('Heure'), created.toLocaleTimeString(getLocale(lang), { hour: '2-digit', minute: '2-digit' })],
+    [tr('Client'), order.guestName],
+    ...(order.guestPhone ? [[tr('Téléphone'), order.guestPhone]] : []),
+    [tr('Type'), orderTypeLabel(order, lang)],
     ...(order.source === 'pos'
-      ? [['Paiement', PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod]]
-      : [['Statut', statusLabel(order.status, order.orderType)]]),
+      ? [[tr('Paiement'), PAYMENT_LABELS[order.paymentMethod] ? tr(PAYMENT_LABELS[order.paymentMethod]) : order.paymentMethod]]
+      : [[tr('Statut'), statusLabel(order.status, order.orderType, lang)]]),
   ]
   doc.setFontSize(9)
   for (const [label, value] of infos) {
@@ -103,7 +111,7 @@ function drawReceipt(doc, order) {
   if (order.guestAddress) {
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(...MUTED)
-    doc.text('Adresse', MARGIN, y)
+    doc.text(tr('Adresse'), MARGIN, y)
     y += 11
     doc.setTextColor(...INK)
     const lines = doc.splitTextToSize(order.guestAddress, RIGHT - MARGIN)
@@ -117,7 +125,7 @@ function drawReceipt(doc, order) {
 
   // Articles
   for (const item of order.items ?? []) {
-    const name = item.dish?.name ?? `Plat #${item.dishId}`
+    const name = item.dish?.name ?? tr('Plat #{id}', { id: item.dishId })
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9.5)
     doc.setTextColor(...INK)
@@ -128,7 +136,7 @@ function drawReceipt(doc, order) {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(...MUTED)
-    doc.text(`${money(item.unitPrice)} l'unité`, MARGIN, y)
+    doc.text(tr("{price} l'unité", { price: money(item.unitPrice) }), MARGIN, y)
     y += 15
   }
 
@@ -137,8 +145,8 @@ function drawReceipt(doc, order) {
 
   // Totaux
   doc.setFontSize(9)
-  const subtotals = [['Sous-total', money(order.subtotal)]]
-  if (Number(order.deliveryFee) > 0) subtotals.push(['Livraison', money(order.deliveryFee)])
+  const subtotals = [[tr('Sous-total'), money(order.subtotal)]]
+  if (Number(order.deliveryFee) > 0) subtotals.push([tr('Livraison'), money(order.deliveryFee)])
   for (const [label, value] of subtotals) {
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(...MUTED)
@@ -154,7 +162,7 @@ function drawReceipt(doc, order) {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(11)
   doc.setTextColor(...INK)
-  doc.text('TOTAL', MARGIN + 10, y + 19)
+  doc.text(tr('TOTAL'), MARGIN + 10, y + 19)
   doc.setFontSize(13)
   doc.text(money(order.total), RIGHT - 10, y + 19.5, { align: 'right' })
   y += 44
@@ -163,7 +171,7 @@ function drawReceipt(doc, order) {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(9)
     doc.setTextColor(...GREEN)
-    doc.text('PAYÉ', CENTER, y, { align: 'center' })
+    doc.text(tr('PAYÉ'), CENTER, y, { align: 'center' })
     y += 18
   }
 
@@ -173,12 +181,12 @@ function drawReceipt(doc, order) {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   doc.setTextColor(...INK)
-  doc.text('Merci de votre visite !', CENTER, y, { align: 'center' })
+  doc.text(tr('Merci de votre visite !'), CENTER, y, { align: 'center' })
   y += 13
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(7.5)
   doc.setTextColor(...MUTED)
-  doc.text('Commandez en ligne sur MauriFood', CENTER, y, { align: 'center' })
+  doc.text(tr('Commandez en ligne sur MauriFood'), CENTER, y, { align: 'center' })
   y += 22
 
   return y

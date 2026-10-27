@@ -4,6 +4,7 @@ import ConfirmModal from '../../components/ConfirmModal'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
 import { badgeClass, btnDanger, btnDark, btnPrimary, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const EMPTY_FORM = { name: '', email: '', password: '' }
 const PAGE_SIZE = 8
@@ -41,7 +42,7 @@ export default function StaffPage() {
       setShowForm(false)
       load()
     } catch (err) {
-      setError(err.response?.data?.error ?? 'Impossible de créer cet utilisateur')
+      setError(err.response?.data?.error ?? t('Impossible de créer cet utilisateur'))
     } finally {
       setLoading(false)
     }
@@ -67,10 +68,10 @@ export default function StaffPage() {
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-extrabold text-ink-900">Équipe</h1>
+        <h1 className="text-2xl font-extrabold text-ink-900">{t('Équipe')}</h1>
         <div className="flex items-center gap-2">
           <input
-            placeholder="Rechercher un membre..."
+            placeholder={t('Rechercher un membre...')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -87,22 +88,22 @@ export default function StaffPage() {
             }}
             className={btnPrimary}
           >
-            Nouvel utilisateur
+            {t('Nouvel utilisateur')}
           </button>
         </div>
       </div>
 
-      <Modal open={showForm} onClose={() => setShowForm(false)} title="Nouvel utilisateur">
+      <Modal open={showForm} onClose={() => setShowForm(false)} title={t('Nouvel utilisateur')}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
-            placeholder="Nom"
+            placeholder={t('Nom')}
             value={form.name}
             onChange={update('name')}
             className={inputClass}
           />
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t('Email')}
             value={form.email}
             onChange={update('email')}
             className={inputClass}
@@ -110,7 +111,7 @@ export default function StaffPage() {
           />
           <input
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t('Mot de passe')}
             value={form.password}
             onChange={update('password')}
             className={inputClass}
@@ -120,22 +121,22 @@ export default function StaffPage() {
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex items-center gap-3 pt-1">
             <button type="submit" disabled={loading} className={btnDark}>
-              {loading ? 'Création...' : 'Créer'}
+              {loading ? t('Création...') : t('Créer')}
             </button>
             <button type="button" onClick={() => setShowForm(false)} className="text-sm text-ink-500">
-              Annuler
+              {t('Annuler')}
             </button>
           </div>
         </form>
       </Modal>
 
       <div className={`${cardClass} overflow-x-auto p-0`}>
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-start text-sm">
           <thead>
             <tr className="border-b border-ink-100 text-xs font-bold uppercase tracking-wide text-ink-400">
-              <th className="px-4 py-3">Nom</th>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Rôle</th>
+              <th className="px-4 py-3">{t('Nom')}</th>
+              <th className="px-4 py-3">{t('Email')}</th>
+              <th className="px-4 py-3">{t('Rôle')}</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -145,11 +146,11 @@ export default function StaffPage() {
                 <td className="px-4 py-3 font-semibold text-ink-900">{member.name || '-'}</td>
                 <td className="px-4 py-3 text-ink-600">{member.email}</td>
                 <td className="px-4 py-3">
-                  <span className={badgeClass('ink')}>Équipe</span>
+                  <span className={badgeClass('ink')}>{t('Équipe')}</span>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-4 py-3 text-end">
                   <button type="button" onClick={() => setMemberToRemove(member)} className={btnDanger}>
-                    Retirer
+                    {t('Retirer')}
                   </button>
                 </td>
               </tr>
@@ -157,19 +158,21 @@ export default function StaffPage() {
           </tbody>
         </table>
         {filteredStaff.length === 0 && (
-          <p className="px-4 py-6 text-ink-400">Aucun membre d'équipe ne correspond à votre recherche.</p>
+          <p className="px-4 py-6 text-ink-400">{t("Aucun membre d'équipe ne correspond à votre recherche.")}</p>
         )}
         <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} total={filteredStaff.length} />
       </div>
 
       <ConfirmModal
         open={Boolean(memberToRemove)}
-        title="Retirer ce membre ?"
+        title={t('Retirer ce membre ?')}
         message={
           memberToRemove &&
-          `${memberToRemove.name || memberToRemove.email} n'aura plus accès au tableau de bord de votre restaurant.`
+          t("{name} n'aura plus accès au tableau de bord de votre restaurant.", {
+            name: memberToRemove.name || memberToRemove.email,
+          })
         }
-        confirmLabel="Retirer"
+        confirmLabel={t('Retirer')}
         onConfirm={removeMember}
         onClose={() => setMemberToRemove(null)}
       />

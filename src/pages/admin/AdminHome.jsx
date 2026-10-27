@@ -8,9 +8,10 @@ import YearlyRevenuePieChart from '../../components/charts/YearlyRevenuePieChart
 import StatusBreakdownChart from '../../components/charts/StatusBreakdownChart'
 import SubscriptionStatusChart from '../../components/charts/SubscriptionStatusChart'
 import TopRestaurantsChart from '../../components/charts/TopRestaurantsChart'
+import { getLocale, t } from '../../i18n'
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 export default function AdminHome() {
@@ -28,16 +29,16 @@ export default function AdminHome() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard icon={Store} label="Restaurants" value={stats.summary.totalRestaurants} />
+        <StatCard icon={Store} label={t('Restaurants')} value={stats.summary.totalRestaurants} />
         <StatCard
           icon={CheckCircle2}
-          label="Restaurants actifs"
+          label={t('Restaurants actifs')}
           value={stats.summary.activeRestaurants}
         />
-        <StatCard icon={Receipt} label="Commandes totales" value={stats.summary.totalOrders} />
+        <StatCard icon={Receipt} label={t('Commandes totales')} value={stats.summary.totalOrders} />
         <StatCard
           icon={Wallet}
-          label="Chiffre d'affaires plateforme"
+          label={t("Chiffre d'affaires plateforme")}
           value={formatMoney(stats.summary.totalRevenue)}
         />
       </div>

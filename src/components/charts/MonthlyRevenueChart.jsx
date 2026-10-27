@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { cardClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 function formatMonthLabel(monthKey) {
   const [year, month] = monthKey.split('-').map(Number)
-  return new Date(year, month - 1, 1).toLocaleDateString('fr-FR', { month: 'short' })
+  return new Date(year, month - 1, 1).toLocaleDateString(getLocale(), { month: 'short' })
 }
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 export default function MonthlyRevenueChart({ data }) {
@@ -19,7 +20,7 @@ export default function MonthlyRevenueChart({ data }) {
   return (
     <div className={cardClass}>
       <div className="flex items-baseline justify-between">
-        <h3 className="font-bold text-ink-900">Chiffre d'affaires par mois (12 derniers mois)</h3>
+        <h3 className="font-bold text-ink-900">{t("Chiffre d'affaires par mois (12 derniers mois)")}</h3>
         {active && (
           <p className="text-sm font-semibold text-ink-700">
             {formatMonthLabel(active.month)} · {formatMoney(active.revenue)}
@@ -28,7 +29,7 @@ export default function MonthlyRevenueChart({ data }) {
       </div>
 
       {total === 0 ? (
-        <p className="mt-6 text-sm text-ink-400">Aucune vente sur cette période.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucune vente sur cette période.')}</p>
       ) : (
         <div className="mt-4 flex h-40 items-end gap-1.5" onMouseLeave={() => setHoverIndex(null)}>
           {data.map((d, i) => (

@@ -4,6 +4,7 @@ import api from '../../api/client'
 import ConfirmModal from '../../components/ConfirmModal'
 import Modal from '../../components/Modal'
 import { badgeClass, btnDanger, btnDark, btnPrimary, cardClass, inputClass } from '../../styles/ui'
+import { t } from '../../i18n'
 
 const EMPTY_ZONE_FORM = { zoneName: '', fee: '', estimatedTimeMinutes: '' }
 const EMPTY_DRIVER_FORM = { name: '', phone: '', vehicle: '' }
@@ -55,7 +56,7 @@ export default function DeliveryPage() {
       const { data } = await api.put('/dashboard/restaurant', { offersDelivery: !offersDelivery })
       setOffersDelivery(data.offersDelivery)
     } catch (err) {
-      setError(err.response?.data?.error ?? 'Impossible de modifier le mode de livraison')
+      setError(err.response?.data?.error ?? t('Impossible de modifier le mode de livraison'))
     } finally {
       setSavingToggle(false)
     }
@@ -100,7 +101,7 @@ export default function DeliveryPage() {
       setShowDriverForm(false)
       loadDrivers()
     } catch (err) {
-      setDriverFormError(err.response?.data?.error ?? "Impossible d'ajouter le livreur")
+      setDriverFormError(err.response?.data?.error ?? t("Impossible d'ajouter le livreur"))
     }
   }
 
@@ -114,14 +115,14 @@ export default function DeliveryPage() {
     const { data } = await api.delete(`/dashboard/drivers/${driver.id}`)
     setNotice(
       data?.deactivated
-        ? `${driver.name} a déjà effectué des livraisons : il a été désactivé au lieu d'être supprimé.`
+        ? t("{name} a déjà effectué des livraisons : il a été désactivé au lieu d'être supprimé.", { name: driver.name })
         : '',
     )
     loadDrivers()
   }
 
   if (offersDelivery === null) {
-    return <p className="text-ink-400">Chargement...</p>
+    return <p className="text-ink-400">{t('Chargement...')}</p>
   }
 
   const activeDrivers = drivers.filter((d) => d.isActive)
@@ -138,11 +139,11 @@ export default function DeliveryPage() {
             {offersDelivery ? <Bike className="h-5 w-5" /> : <Store className="h-5 w-5" />}
           </div>
           <div>
-            <p className="font-bold text-ink-900">Je propose la livraison</p>
+            <p className="font-bold text-ink-900">{t('Je propose la livraison')}</p>
             <p className="text-sm text-ink-500">
               {offersDelivery
-                ? 'Vos clients peuvent choisir entre livraison et retrait sur place.'
-                : 'Vos clients ne peuvent commander qu’à emporter.'}
+                ? t('Vos clients peuvent choisir entre livraison et retrait sur place.')
+                : t('Vos clients ne peuvent commander qu’à emporter.')}
             </p>
           </div>
         </div>
@@ -150,7 +151,7 @@ export default function DeliveryPage() {
           type="button"
           role="switch"
           aria-checked={offersDelivery}
-          aria-label="Je propose la livraison"
+          aria-label={t('Je propose la livraison')}
           onClick={toggleDelivery}
           disabled={savingToggle}
           className={`relative h-7 w-12 shrink-0 rounded-full transition disabled:opacity-50 ${
@@ -158,8 +159,8 @@ export default function DeliveryPage() {
           }`}
         >
           <span
-            className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-              offersDelivery ? 'translate-x-5' : ''
+            className={`absolute top-1 start-1 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+              offersDelivery ? 'translate-x-5 rtl:-translate-x-5' : ''
             }`}
           />
         </button>
@@ -176,33 +177,32 @@ export default function DeliveryPage() {
             <div className="flex items-start gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-700">
               <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
-                Aucun livreur actif. Ajoutez au moins un livreur : il faut en assigner un à chaque
-                commande avant de l’envoyer en livraison.
+                {t('Aucun livreur actif. Ajoutez au moins un livreur : il faut en assigner un à chaque commande avant de l’envoyer en livraison.')}
               </p>
             </div>
           )}
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-ink-900">Livreurs</h2>
+              <h2 className="text-lg font-extrabold text-ink-900">{t('Livreurs')}</h2>
               <button
                 type="button"
                 onClick={openDriverForm}
                 className={btnPrimary}
               >
-                Nouveau livreur
+                {t('Nouveau livreur')}
               </button>
             </div>
 
 
             <div className={`${cardClass} overflow-x-auto p-0`}>
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-start text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-xs font-bold uppercase tracking-wide text-ink-400">
-                    <th className="px-4 py-3">Nom</th>
-                    <th className="px-4 py-3">Téléphone</th>
-                    <th className="px-4 py-3">Véhicule</th>
-                    <th className="px-4 py-3">Statut</th>
+                    <th className="px-4 py-3">{t('Nom')}</th>
+                    <th className="px-4 py-3">{t('Téléphone')}</th>
+                    <th className="px-4 py-3">{t('Véhicule')}</th>
+                    <th className="px-4 py-3">{t('Statut')}</th>
                     <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
@@ -218,12 +218,12 @@ export default function DeliveryPage() {
                           onClick={() => toggleDriverActive(driver)}
                           className={badgeClass(driver.isActive ? 'green' : 'ink')}
                         >
-                          {driver.isActive ? 'Actif' : 'Inactif'}
+                          {driver.isActive ? t('Actif') : t('Inactif')}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-end">
                         <button type="button" onClick={() => setDriverToDelete(driver)} className={btnDanger}>
-                          Supprimer
+                          {t('Supprimer')}
                         </button>
                       </td>
                     </tr>
@@ -231,27 +231,27 @@ export default function DeliveryPage() {
                 </tbody>
               </table>
               {drivers.length === 0 && (
-                <p className="px-4 py-6 text-ink-400">Aucun livreur pour le moment.</p>
+                <p className="px-4 py-6 text-ink-400">{t('Aucun livreur pour le moment.')}</p>
               )}
             </div>
           </section>
 
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-ink-900">Zones de livraison</h2>
+              <h2 className="text-lg font-extrabold text-ink-900">{t('Zones de livraison')}</h2>
               <button type="button" onClick={openZoneForm} className={btnPrimary}>
-                Nouvelle zone
+                {t('Nouvelle zone')}
               </button>
             </div>
 
 
             <div className={`${cardClass} overflow-x-auto p-0`}>
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-start text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-xs font-bold uppercase tracking-wide text-ink-400">
-                    <th className="px-4 py-3">Zone</th>
-                    <th className="px-4 py-3">Frais</th>
-                    <th className="px-4 py-3">Délai</th>
+                    <th className="px-4 py-3">{t('Zone')}</th>
+                    <th className="px-4 py-3">{t('Frais')}</th>
+                    <th className="px-4 py-3">{t('Délai')}</th>
                     <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
@@ -261,11 +261,11 @@ export default function DeliveryPage() {
                       <td className="px-4 py-3 font-semibold text-ink-900">{zone.zoneName}</td>
                       <td className="px-4 py-3 text-ink-600">{zone.fee} MRU</td>
                       <td className="px-4 py-3 text-ink-600">
-                        {zone.estimatedTimeMinutes ? `${zone.estimatedTimeMinutes} min` : '-'}
+                        {zone.estimatedTimeMinutes ? t('{n} min', { n: zone.estimatedTimeMinutes }) : '-'}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-end">
                         <button type="button" onClick={() => setZoneToDelete(zone)} className={btnDanger}>
-                          Supprimer
+                          {t('Supprimer')}
                         </button>
                       </td>
                     </tr>
@@ -273,17 +273,17 @@ export default function DeliveryPage() {
                 </tbody>
               </table>
               {zones.length === 0 && (
-                <p className="px-4 py-6 text-ink-400">Aucune zone pour le moment.</p>
+                <p className="px-4 py-6 text-ink-400">{t('Aucune zone pour le moment.')}</p>
               )}
             </div>
           </section>
         </>
       )}
 
-      <Modal open={showDriverForm} onClose={() => setShowDriverForm(false)} title="Nouveau livreur">
+      <Modal open={showDriverForm} onClose={() => setShowDriverForm(false)} title={t('Nouveau livreur')}>
         <form onSubmit={handleDriverSubmit} className="flex flex-col gap-3">
           <input
-            placeholder="Nom complet"
+            placeholder={t('Nom complet')}
             value={driverForm.name}
             onChange={(e) => setDriverForm((f) => ({ ...f, name: e.target.value }))}
             className={inputClass}
@@ -291,14 +291,14 @@ export default function DeliveryPage() {
           />
           <input
             type="tel"
-            placeholder="Téléphone"
+            placeholder={t('Téléphone')}
             value={driverForm.phone}
             onChange={(e) => setDriverForm((f) => ({ ...f, phone: e.target.value }))}
             className={inputClass}
             required
           />
           <input
-            placeholder="Véhicule (ex : moto Yamaha, plaque 1234 AB 00) — optionnel"
+            placeholder={t('Véhicule (ex : moto Yamaha, plaque 1234 AB 00) — optionnel')}
             value={driverForm.vehicle}
             onChange={(e) => setDriverForm((f) => ({ ...f, vehicle: e.target.value }))}
             className={inputClass}
@@ -308,23 +308,23 @@ export default function DeliveryPage() {
           )}
           <div className="flex items-center gap-3 pt-1">
             <button type="submit" className={btnDark}>
-              Ajouter
+              {t('Ajouter')}
             </button>
             <button
               type="button"
               onClick={() => setShowDriverForm(false)}
               className="text-sm text-ink-500"
             >
-              Annuler
+              {t('Annuler')}
             </button>
           </div>
         </form>
       </Modal>
 
-      <Modal open={showZoneForm} onClose={() => setShowZoneForm(false)} title="Nouvelle zone de livraison">
+      <Modal open={showZoneForm} onClose={() => setShowZoneForm(false)} title={t('Nouvelle zone de livraison')}>
         <form onSubmit={handleZoneSubmit} className="flex flex-col gap-3">
           <input
-            placeholder="Nom de la zone"
+            placeholder={t('Nom de la zone')}
             value={zoneForm.zoneName}
             onChange={(e) => setZoneForm((f) => ({ ...f, zoneName: e.target.value }))}
             className={inputClass}
@@ -333,7 +333,7 @@ export default function DeliveryPage() {
           <input
             type="number"
             step="0.01"
-            placeholder="Frais de livraison (MRU)"
+            placeholder={t('Frais de livraison (MRU)')}
             value={zoneForm.fee}
             onChange={(e) => setZoneForm((f) => ({ ...f, fee: e.target.value }))}
             className={inputClass}
@@ -341,7 +341,7 @@ export default function DeliveryPage() {
           />
           <input
             type="number"
-            placeholder="Délai estimé (minutes)"
+            placeholder={t('Délai estimé (minutes)')}
             value={zoneForm.estimatedTimeMinutes}
             onChange={(e) =>
               setZoneForm((f) => ({ ...f, estimatedTimeMinutes: e.target.value }))
@@ -350,14 +350,14 @@ export default function DeliveryPage() {
           />
           <div className="flex items-center gap-3 pt-1">
             <button type="submit" className={btnDark}>
-              Créer
+              {t('Créer')}
             </button>
             <button
               type="button"
               onClick={() => setShowZoneForm(false)}
               className="text-sm text-ink-500"
             >
-              Annuler
+              {t('Annuler')}
             </button>
           </div>
         </form>
@@ -365,10 +365,12 @@ export default function DeliveryPage() {
 
       <ConfirmModal
         open={Boolean(driverToDelete)}
-        title="Supprimer ce livreur ?"
+        title={t('Supprimer ce livreur ?')}
         message={
           driverToDelete &&
-          `${driverToDelete.name} sera retiré de vos livreurs. S'il a déjà effectué des livraisons, il sera seulement désactivé pour garder l'historique.`
+          t("{name} sera retiré de vos livreurs. S'il a déjà effectué des livraisons, il sera seulement désactivé pour garder l'historique.", {
+            name: driverToDelete.name,
+          })
         }
         onConfirm={deleteDriver}
         onClose={() => setDriverToDelete(null)}
@@ -376,10 +378,10 @@ export default function DeliveryPage() {
 
       <ConfirmModal
         open={Boolean(zoneToDelete)}
-        title="Supprimer cette zone ?"
+        title={t('Supprimer cette zone ?')}
         message={
           zoneToDelete &&
-          `La zone « ${zoneToDelete.zoneName} » ne sera plus proposée à vos clients.`
+          t('La zone « {name} » ne sera plus proposée à vos clients.', { name: zoneToDelete.zoneName })
         }
         onConfirm={deleteZone}
         onClose={() => setZoneToDelete(null)}

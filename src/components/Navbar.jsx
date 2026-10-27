@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { ShoppingCart, UtensilsCrossed } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import { t } from '../i18n'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -22,14 +24,14 @@ export default function Navbar() {
             to="/restaurants"
             className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
           >
-            Restaurants
+            {t('Restaurants')}
           </Link>
 
           <Link
             to="/mes-commandes"
             className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
           >
-            Mes commandes
+            {t('Mes commandes')}
           </Link>
 
           {!user && (
@@ -37,7 +39,7 @@ export default function Navbar() {
               to="/login"
               className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
             >
-              Espace restaurant
+              {t('Espace restaurant')}
             </Link>
           )}
 
@@ -46,7 +48,7 @@ export default function Navbar() {
               to="/dashboard"
               className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
             >
-              Mon espace
+              {t('Mon espace')}
             </Link>
           )}
           {user?.role === 'super_admin' && (
@@ -54,7 +56,7 @@ export default function Navbar() {
               to="/admin"
               className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
             >
-              Administration
+              {t('Administration')}
             </Link>
           )}
           {user && (
@@ -63,18 +65,20 @@ export default function Navbar() {
               onClick={logout}
               className="hidden font-medium text-ink-600 hover:text-brand-600 sm:inline"
             >
-              Déconnexion
+              {t('Déconnexion')}
             </button>
           )}
+
+          <LanguageSwitcher />
 
           <Link
             to="/panier"
             className="relative flex h-10 w-10 items-center justify-center rounded-full bg-ink-900 text-white transition hover:bg-ink-700"
-            aria-label="Panier"
+            aria-label={t('Panier')}
           >
             <ShoppingCart className="h-[18px] w-[18px]" />
             {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-500 text-[10px] font-bold text-ink-900">
+              <span className="absolute -end-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-500 text-[10px] font-bold text-ink-900">
                 {itemCount}
               </span>
             )}

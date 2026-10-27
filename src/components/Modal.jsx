@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { t } from '../i18n'
 
 export default function Modal({ open, onClose, title, children }) {
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function Modal({ open, onClose, title, children }) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer"
+            aria-label={t('Fermer')}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-400 transition hover:bg-ink-50 hover:text-ink-700"
           >
             <X className="h-4 w-4" />

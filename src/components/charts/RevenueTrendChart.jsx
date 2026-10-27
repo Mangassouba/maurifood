@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cardClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 const WIDTH = 640
 const HEIGHT = 200
@@ -9,11 +10,11 @@ const PAD_TOP = 16
 const PAD_BOTTOM = 28
 
 function formatShortDate(iso) {
-  return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
+  return new Date(iso).toLocaleDateString(getLocale(), { day: '2-digit', month: 'short' })
 }
 
 function formatMoney(n) {
-  return `${Math.round(n).toLocaleString('fr-FR')} MRU`
+  return `${Math.round(n).toLocaleString(getLocale())} MRU`
 }
 
 export default function RevenueTrendChart({ data }) {
@@ -48,7 +49,7 @@ export default function RevenueTrendChart({ data }) {
   return (
     <div className={cardClass}>
       <div className="flex items-baseline justify-between">
-        <h3 className="font-bold text-ink-900">Chiffre d'affaires (14 derniers jours)</h3>
+        <h3 className="font-bold text-ink-900">{t("Chiffre d'affaires (14 derniers jours)")}</h3>
         {active && (
           <p className="text-sm font-semibold text-ink-700">
             {formatShortDate(active.date)} · {formatMoney(active.revenue)}
@@ -57,7 +58,7 @@ export default function RevenueTrendChart({ data }) {
       </div>
 
       {maxRevenue <= 1 && data.every((d) => d.revenue === 0) ? (
-        <p className="mt-6 text-sm text-ink-400">Aucune vente sur cette période.</p>
+        <p className="mt-6 text-sm text-ink-400">{t('Aucune vente sur cette période.')}</p>
       ) : (
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}

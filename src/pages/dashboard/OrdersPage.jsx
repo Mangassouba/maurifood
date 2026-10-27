@@ -12,6 +12,7 @@ import {
   statusesFor,
 } from '../../lib/orderStatus'
 import { badgeClass, btnDark, cardClass, inputClass } from '../../styles/ui'
+import { getLocale, t } from '../../i18n'
 
 const ALL_STATUSES = [...STATUS_FLOW, 'cancelled']
 
@@ -34,15 +35,15 @@ const btnAdvance =
   'inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-sm font-bold text-blue-600 transition hover:bg-blue-50'
 
 function advanceLabel(status, orderType) {
-  if (status === 'confirmed') return 'Confirmer'
-  if (status === 'preparing') return 'Mettre en préparation'
-  if (status === 'ready') return 'Marquer Prête'
-  if (status === 'out_for_delivery') return 'Envoyer en livraison'
+  if (status === 'confirmed') return t('Confirmer')
+  if (status === 'preparing') return t('Mettre en préparation')
+  if (status === 'ready') return t('Marquer Prête')
+  if (status === 'out_for_delivery') return t('Envoyer en livraison')
   return statusLabel(status, orderType)
 }
 
 function validateLabel(orderType) {
-  return orderType === 'delivery' ? 'Valider la livraison' : 'Valider le retrait'
+  return orderType === 'delivery' ? t('Valider la livraison') : t('Valider le retrait')
 }
 
 function normalizeCode(value) {
@@ -52,7 +53,7 @@ function normalizeCode(value) {
 }
 
 function formatDate(value) {
-  return new Date(value).toLocaleString('fr-FR', {
+  return new Date(value).toLocaleString(getLocale(), {
     day: '2-digit',
     month: '2-digit',
     year: '2-digit',
@@ -98,7 +99,7 @@ export default function OrdersPage() {
     try {
       await api.put(`/dashboard/orders/${id}/status`, { status })
     } catch (err) {
-      setActionError(err.response?.data?.error ?? 'Impossible de modifier le statut')
+      setActionError(err.response?.data?.error ?? t('Impossible de modifier le statut'))
       return
     }
     load()
@@ -109,7 +110,7 @@ export default function OrdersPage() {
     try {
       await api.put(`/dashboard/orders/${id}/driver`, { driverId: driverId || null })
     } catch (err) {
-      setActionError(err.response?.data?.error ?? "Impossible d'assigner le livreur")
+      setActionError(err.response?.data?.error ?? t("Impossible d'assigner le livreur"))
       return
     }
     const driver = drivers.find((d) => d.id === Number(driverId)) ?? null
@@ -133,7 +134,7 @@ export default function OrdersPage() {
     const code = normalizeCode(codeInput)
     const order = orders.find((o) => o.code === code)
     if (!order) {
-      setCodeError(`Aucune commande trouvée pour le code ${code}`)
+      setCodeError(t('Aucune commande trouvée pour le code {code}', { code }))
       return
     }
     setCodeError('')
@@ -163,16 +164,16 @@ export default function OrdersPage() {
             <Search className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-lg font-extrabold text-ink-900">Vérifier un code de retrait</h2>
+            <h2 className="text-lg font-extrabold text-ink-900">{t('Vérifier un code de retrait')}</h2>
             <p className="text-sm text-ink-500">
-              Le client vous présente un code du type{' '}
+              {t('Le client vous présente un code du type')}{' '}
               <span className="font-mono font-bold text-ink-600">MF-XXXXXX</span>
             </p>
           </div>
         </div>
         <div className="mt-5 flex gap-3">
           <input
-            placeholder="Ex : MF-ABC123"
+            placeholder={t('Ex : MF-ABC123')}
             value={codeInput}
             onChange={(e) => {
               setCodeInput(e.target.value)
@@ -185,7 +186,7 @@ export default function OrdersPage() {
             disabled={!codeInput.trim()}
             className="whitespace-nowrap rounded-xl bg-green-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-green-700 disabled:opacity-50"
           >
-            Vérifier le code
+            {t('Vérifier le code')}
           </button>
         </div>
         {codeError && <p className="mt-2 text-sm font-semibold text-red-600">{codeError}</p>}
@@ -194,7 +195,7 @@ export default function OrdersPage() {
       <div className="flex items-center gap-4">
         <div className="h-px flex-1 bg-ink-100" />
         <span className="text-xs font-bold tracking-widest text-ink-400 uppercase">
-          Commandes en ligne
+          {t('Commandes en ligne')}
         </span>
         <div className="h-px flex-1 bg-ink-100" />
       </div>
@@ -202,8 +203,8 @@ export default function OrdersPage() {
       <div className="overflow-hidden rounded-2xl border border-ink-100 bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 p-5">
           <div>
-            <h2 className="text-lg font-extrabold text-ink-900">Commandes passées via la vitrine</h2>
-            <p className="text-sm text-ink-500">{filteredOrders.length} commande(s)</p>
+            <h2 className="text-lg font-extrabold text-ink-900">{t('Commandes passées via la vitrine')}</h2>
+            <p className="text-sm text-ink-500">{t('{n} commande(s)', { n: filteredOrders.length })}</p>
           </div>
           <div className="flex flex-nowrap items-center gap-2">
             <select
@@ -214,9 +215,9 @@ export default function OrdersPage() {
               }}
               className={`${inputClass} w-44 min-w-0 shrink`}
             >
-              <option value="all">Tous les types</option>
-              <option value="delivery">Livraison</option>
-              <option value="pickup">À emporter</option>
+              <option value="all">{t('Tous les types')}</option>
+              <option value="delivery">{t('Livraison')}</option>
+              <option value="pickup">{t('À emporter')}</option>
             </select>
             <select
               value={statusFilter}
@@ -226,7 +227,7 @@ export default function OrdersPage() {
               }}
               className={`${inputClass} w-44 min-w-0 shrink`}
             >
-              <option value="all">Tous les statuts</option>
+              <option value="all">{t('Tous les statuts')}</option>
               {(typeFilter === 'all' ? ALL_STATUSES : [...statusesFor(typeFilter), 'cancelled']).map((s) => (
                 <option key={s} value={s}>
                   {typeFilter === 'all' ? genericStatusLabel(s) : statusLabel(s, typeFilter)}
@@ -239,22 +240,22 @@ export default function OrdersPage() {
               disabled={loading}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-ink-100 px-4 py-2.5 text-sm font-bold text-ink-900 transition hover:bg-ink-50 disabled:opacity-50"
             >
-              <RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Actualiser
+              <RotateCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> {t('Actualiser')}
             </button>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-left text-sm">
+          <table className="w-full min-w-[900px] text-start text-sm">
             <thead className="border-y border-ink-100 bg-ink-50 text-xs font-bold tracking-wider text-ink-500 uppercase">
               <tr>
-                <th className="px-5 py-3">Code retrait</th>
-                <th className="px-5 py-3">Client</th>
-                <th className="px-5 py-3">Date</th>
-                <th className="px-5 py-3">Articles</th>
-                <th className="px-5 py-3">Total</th>
-                <th className="px-5 py-3">Statut</th>
-                <th className="px-5 py-3">Actions</th>
+                <th className="px-5 py-3">{t('Code retrait')}</th>
+                <th className="px-5 py-3">{t('Client')}</th>
+                <th className="px-5 py-3">{t('Date')}</th>
+                <th className="px-5 py-3">{t('Articles')}</th>
+                <th className="px-5 py-3">{t('Total')}</th>
+                <th className="px-5 py-3">{t('Statut')}</th>
+                <th className="px-5 py-3">{t('Actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink-100">
@@ -273,10 +274,10 @@ export default function OrdersPage() {
                       </button>
                       <p className="text-xs text-ink-400">
                         {order.source === 'pos'
-                          ? 'Vente caisse'
+                          ? t('Vente caisse')
                           : order.orderType === 'delivery'
-                            ? 'Livraison'
-                            : 'À emporter'}
+                            ? t('Livraison')
+                            : t('À emporter')}
                         {order.driver && ` · ${order.driver.name}`}
                       </p>
                     </td>
@@ -288,7 +289,7 @@ export default function OrdersPage() {
                       {formatDate(order.createdAt)}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-ink-600">
-                      {itemCount(order)} produit(s)
+                      {t('{n} produit(s)', { n: itemCount(order) })}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap font-mono font-bold text-green-700">
                       {Number(order.total)} MRU
@@ -302,7 +303,7 @@ export default function OrdersPage() {
                       <div className="flex flex-nowrap items-center gap-2">
                         {isOpen && (
                           <button type="button" onClick={() => setDetailsOrder(order)} className={btnValidate}>
-                            <Search className="h-4 w-4" /> Vérifier & Valider
+                            <Search className="h-4 w-4" /> {t('Vérifier & Valider')}
                           </button>
                         )}
                         {next && next !== 'delivered' && (
@@ -320,7 +321,7 @@ export default function OrdersPage() {
                             onClick={() => setDetailsOrder(order)}
                             className="text-sm font-semibold text-ink-600 hover:text-ink-900"
                           >
-                            Détails
+                            {t('Détails')}
                           </button>
                         )}
                       </div>
@@ -333,7 +334,7 @@ export default function OrdersPage() {
         </div>
 
         {filteredOrders.length === 0 && (
-          <p className="px-5 py-8 text-center text-ink-400">Aucune commande pour ces filtres.</p>
+          <p className="px-5 py-8 text-center text-ink-400">{t('Aucune commande pour ces filtres.')}</p>
         )}
 
         {pageCount > 1 && (
@@ -346,7 +347,7 @@ export default function OrdersPage() {
       <Modal
         open={Boolean(detailsOrder)}
         onClose={() => setDetailsOrder(null)}
-        title={detailsOrder ? `Commande ${detailsOrder.code}` : ''}
+        title={detailsOrder ? t('Commande {code}', { code: detailsOrder.code }) : ''}
       >
         {detailsOrder && (
           <div className="flex flex-col gap-4">
@@ -355,7 +356,7 @@ export default function OrdersPage() {
                 {statusLabel(detailsOrder.status, detailsOrder.orderType)}
               </span>
               <span className="text-sm text-ink-500">
-                {detailsOrder.orderType === 'delivery' ? 'Livraison' : 'À emporter'}
+                {detailsOrder.orderType === 'delivery' ? t('Livraison') : t('À emporter')}
               </span>
             </div>
 
@@ -370,7 +371,7 @@ export default function OrdersPage() {
             {detailsOrder.orderType === 'delivery' && (
               <div>
                 <label className="mb-1 block text-xs font-bold tracking-wide text-ink-400 uppercase">
-                  Livreur
+                  {t('Livreur')}
                 </label>
                 <select
                   value={detailsOrder.driverId ?? ''}
@@ -378,7 +379,7 @@ export default function OrdersPage() {
                   disabled={FINAL_STATUSES.includes(detailsOrder.status)}
                   className={inputClass}
                 >
-                  <option value="">Aucun livreur assigné</option>
+                  <option value="">{t('Aucun livreur assigné')}</option>
                   {drivers
                     .filter((d) => d.isActive || d.id === detailsOrder.driverId)
                     .map((d) => (
@@ -391,8 +392,8 @@ export default function OrdersPage() {
                 {!detailsOrder.driverId && !FINAL_STATUSES.includes(detailsOrder.status) && (
                   <p className="mt-1 text-xs text-brand-700">
                     {drivers.some((d) => d.isActive)
-                      ? 'Assignez un livreur pour pouvoir envoyer la commande en livraison.'
-                      : 'Aucun livreur actif : ajoutez-en un dans la page Livraison.'}
+                      ? t('Assignez un livreur pour pouvoir envoyer la commande en livraison.')
+                      : t('Aucun livreur actif : ajoutez-en un dans la page Livraison.')}
                   </p>
                 )}
               </div>
@@ -413,17 +414,17 @@ export default function OrdersPage() {
 
             <div className="flex flex-col gap-1 text-sm">
               <div className="flex justify-between text-ink-500">
-                <span>Sous-total</span>
+                <span>{t('Sous-total')}</span>
                 <span>{detailsOrder.subtotal} MRU</span>
               </div>
               {detailsOrder.orderType === 'delivery' && (
                 <div className="flex justify-between text-ink-500">
-                  <span>Frais de livraison</span>
+                  <span>{t('Frais de livraison')}</span>
                   <span>{detailsOrder.deliveryFee} MRU</span>
                 </div>
               )}
               <div className="flex justify-between text-base font-extrabold text-ink-900">
-                <span>Total</span>
+                <span>{t('Total')}</span>
                 <span>{detailsOrder.total} MRU</span>
               </div>
             </div>
@@ -453,7 +454,7 @@ export default function OrdersPage() {
         )}
       </Modal>
 
-      <Modal open={Boolean(actionError)} onClose={() => setActionError('')} title="Action impossible">
+      <Modal open={Boolean(actionError)} onClose={() => setActionError('')} title={t('Action impossible')}>
         <div className="flex flex-col gap-4">
           <p className="text-sm text-ink-600">{actionError}</p>
           <button type="button" onClick={() => setActionError('')} className={`${btnDark} self-end`}>

@@ -1,3 +1,5 @@
+import { getLang, t, tIn } from '../i18n'
+
 export const STATUS_LABELS = {
   pending: 'En attente',
   confirmed: 'Confirmée',
@@ -31,15 +33,16 @@ export function statusesFor(orderType) {
   return orderType === 'pickup' ? STATUS_FLOW.filter((s) => s !== 'out_for_delivery') : STATUS_FLOW
 }
 
-export function statusLabel(status, orderType) {
+// `lang` permet de forcer une langue (ex. reçu PDF), sinon langue courante
+export function statusLabel(status, orderType, lang = getLang()) {
   const labels = orderType === 'pickup' ? PICKUP_LABELS : STATUS_LABELS
-  return labels[status] ?? status
+  return labels[status] ? tIn(lang, labels[status]) : status
 }
 
 // Libellé utilisé quand le type de commande n'est pas connu (filtres « tous les types »)
 export function genericStatusLabel(status) {
-  if (status === 'delivered') return 'Livrée / Retirée'
-  return STATUS_LABELS[status] ?? status
+  if (status === 'delivered') return t('Livrée / Retirée')
+  return STATUS_LABELS[status] ? t(STATUS_LABELS[status]) : status
 }
 
 export function nextStatus(status, orderType) {

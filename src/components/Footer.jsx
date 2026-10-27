@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { UtensilsCrossed } from 'lucide-react'
+import { t } from '../i18n'
 
 export default function Footer() {
   return (
@@ -13,42 +14,41 @@ export default function Footer() {
             <span className="text-lg font-extrabold tracking-tight">MauriFood</span>
           </Link>
           <p className="mt-3 text-sm text-white/60">
-            Commandez vos plats préférés auprès des restaurants de Nouakchott, sans compte, en
-            quelques clics.
+            {t('Commandez vos plats préférés auprès des restaurants de Nouakchott, sans compte, en quelques clics.')}
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-wide text-white/40">
-              Commander
+              {t('Commander')}
             </p>
             <nav className="flex flex-col gap-2 text-sm text-white/70">
               <Link to="/" className="hover:text-brand-400">
-                Accueil
+                {t('Accueil')}
               </Link>
               <Link to="/restaurants" className="hover:text-brand-400">
-                Restaurants
+                {t('Restaurants')}
               </Link>
               <Link to="/panier" className="hover:text-brand-400">
-                Panier
+                {t('Panier')}
               </Link>
               <Link to="/mes-commandes" className="hover:text-brand-400">
-                Mes commandes
+                {t('Mes commandes')}
               </Link>
             </nav>
           </div>
 
           <div>
             <p className="mb-3 text-xs font-bold uppercase tracking-wide text-white/40">
-              Professionnels
+              {t('Professionnels')}
             </p>
             <nav className="flex flex-col gap-2 text-sm text-white/70">
               <Link to="/login" className="hover:text-brand-400">
-                Espace restaurant
+                {t('Espace restaurant')}
               </Link>
               <Link to="/inscription" className="hover:text-brand-400">
-                Inscrire mon restaurant
+                {t('Inscrire mon restaurant')}
               </Link>
             </nav>
           </div>
@@ -57,7 +57,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10 px-4 py-4 sm:px-6">
         <p className="mx-auto max-w-6xl text-xs text-white/40">
-          © {new Date().getFullYear()} MauriFood. Tous droits réservés.
+          © {new Date().getFullYear()} MauriFood. {t('Tous droits réservés.')}
         </p>
       </div>
     </footer>
