@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import PasswordInput from '../../components/PasswordInput'
 import { btnDark, cardClass, inputClass } from '../../styles/ui'
 import { t } from '../../i18n'
 
@@ -41,12 +42,11 @@ export default function LoginPage() {
           className={inputClass}
           required
         />
-        <input
-          type="password"
+        <PasswordInput
           placeholder={t('Mot de passe')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className={inputClass}
+          autoComplete="current-password"
           required
         />
         {error && <p className="text-sm text-red-600">{error}</p>}

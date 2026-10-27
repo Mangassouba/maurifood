@@ -432,4 +432,7 @@ export default {
   'Un avis a déjà été laissé pour cette commande': 'تم ترك تقييم لهذا الطلب مسبقًا',
   'Un commentaire ? (optionnel)': 'هل لديك تعليق؟ (اختياري)',
   'Votre avis compte': 'رأيك يهمّنا',
+  // Champ mot de passe
+  'Afficher le mot de passe': 'إظهار كلمة المرور',
+  'Masquer le mot de passe': 'إخفاء كلمة المرور',
 }

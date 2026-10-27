@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import api from '../../api/client'
+import PasswordInput from '../../components/PasswordInput'
 import { btnPrimary, cardClass, inputClass } from '../../styles/ui'
 import { t } from '../../i18n'
 
@@ -84,12 +85,11 @@ export default function RegisterPage() {
           className={inputClass}
           required
         />
-        <input
-          type="password"
+        <PasswordInput
           placeholder={t('Mot de passe')}
           value={form.password}
           onChange={update('password')}
-          className={inputClass}
+          autoComplete="new-password"
           required
           minLength={6}
         />

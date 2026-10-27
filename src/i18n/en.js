@@ -432,4 +432,7 @@ export default {
   'Un avis a déjà été laissé pour cette commande': 'A review has already been left for this order',
   'Un commentaire ? (optionnel)': 'Any comments? (optional)',
   'Votre avis compte': 'Your opinion matters',
+  // Champ mot de passe
+  'Afficher le mot de passe': 'Show password',
+  'Masquer le mot de passe': 'Hide password',
 }

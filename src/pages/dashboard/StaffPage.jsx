@@ -3,6 +3,7 @@ import api from '../../api/client'
 import ConfirmModal from '../../components/ConfirmModal'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
+import PasswordInput from '../../components/PasswordInput'
 import { badgeClass, btnDanger, btnDark, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 import { t } from '../../i18n'
 
@@ -109,12 +110,11 @@ export default function StaffPage() {
             className={inputClass}
             required
           />
-          <input
-            type="password"
+          <PasswordInput
             placeholder={t('Mot de passe')}
             value={form.password}
             onChange={update('password')}
-            className={inputClass}
+            autoComplete="new-password"
             required
             minLength={6}
           />
