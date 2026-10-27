@@ -435,4 +435,7 @@ export default {
   // Champ mot de passe
   'Afficher le mot de passe': 'Show password',
   'Masquer le mot de passe': 'Hide password',
+  // Pied de page
+  Contact: 'Contact',
+  'Nouakchott, Mauritanie': 'Nouakchott, Mauritania',
 }

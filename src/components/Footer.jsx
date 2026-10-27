@@ -1,6 +1,16 @@
 import { Link } from 'react-router-dom'
-import { UtensilsCrossed } from 'lucide-react'
+import { Mail, MapPin, MessageCircle, Phone, UtensilsCrossed } from 'lucide-react'
 import { t } from '../i18n'
+
+// Coordonnées affichées dans le pied de page. Une valeur à null n'est pas affichée.
+const CONTACT = {
+  phone: '44896920', // numéro local mauritanien (indicatif +222)
+  whatsapp: '22244896920', // format international sans « + » pour wa.me
+  email: null, // ex. 'contact@maurifood.mr'
+  city: 'Nouakchott, Mauritanie',
+}
+
+const contactLinkClass = 'flex items-center gap-2 hover:text-brand-400'
 
 export default function Footer() {
   return (
@@ -51,6 +61,44 @@ export default function Footer() {
                 {t('Inscrire mon restaurant')}
               </Link>
             </nav>
+          </div>
+
+          <div>
+            <p className="mb-3 text-xs font-bold uppercase tracking-wide text-white/40">
+              {t('Contact')}
+            </p>
+            <address className="flex flex-col gap-2 text-sm not-italic text-white/70">
+              {CONTACT.phone && (
+                <a href={`tel:+222${CONTACT.phone}`} className={contactLinkClass}>
+                  <Phone className="h-4 w-4 shrink-0" />
+                  {/* Chiffres toujours lus de gauche à droite, même en arabe */}
+                  <span dir="ltr">+222 {CONTACT.phone}</span>
+                </a>
+              )}
+              {CONTACT.whatsapp && (
+                <a
+                  href={`https://wa.me/${CONTACT.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={contactLinkClass}
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  WhatsApp
+                </a>
+              )}
+              {CONTACT.email && (
+                <a href={`mailto:${CONTACT.email}`} className={contactLinkClass}>
+                  <Mail className="h-4 w-4 shrink-0" />
+                  <span className="break-all">{CONTACT.email}</span>
+                </a>
+              )}
+              {CONTACT.city && (
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 shrink-0" />
+                  {t(CONTACT.city)}
+                </span>
+              )}
+            </address>
           </div>
         </div>
       </div>
