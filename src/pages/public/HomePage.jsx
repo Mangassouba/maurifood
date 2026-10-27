@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Banknote, Clock, ShoppingBag, Truck } from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
+import ReviewsCarousel from '../../components/ReviewsCarousel'
 import { t } from '../../i18n'
+
+// Atouts affichés dans la bannière d'accueil
+const HIGHLIGHTS = [
+  { icon: ShoppingBag, label: 'Sans création de compte' },
+  { icon: Truck, label: 'Livraison ou retrait' },
+  { icon: Banknote, label: 'Paiement à la réception' },
+  { icon: Clock, label: 'Suivi avec votre code' },
+]
 
 export default function HomePage() {
   const [dishes, setDishes] = useState([])
@@ -72,22 +83,44 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Promo banner */}
-      <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-400 to-brand-600 px-6 py-8">
+      {/* Bannière de présentation */}
+      <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-400 to-brand-600 px-6 py-8 sm:px-8">
         <div className="absolute -bottom-10 -end-8 h-40 w-40 rounded-full bg-white/15" />
         <div className="absolute -end-2 top-4 h-16 w-16 rounded-full bg-white/10" />
         <p className="relative text-xs font-bold uppercase tracking-wide text-ink-900/70">
-          {t('Offre limitée')}
+          {t('Commandez en ligne sur MauriFood')}
         </p>
-        <h2 className="relative mt-1 max-w-xs text-2xl font-extrabold text-ink-900 sm:text-3xl">
-          {t('-20% sur votre première commande')}
+        <h2 className="relative mt-1 max-w-lg text-2xl font-extrabold text-ink-900 sm:text-3xl">
+          {t('Les restaurants de Nouakchott, à portée de main')}
         </h2>
-        <button
-          type="button"
-          className="relative mt-4 rounded-full bg-ink-900 px-5 py-2 text-sm font-bold text-white transition hover:bg-ink-700"
-        >
-          {t('Commander')}
-        </button>
+        <p className="relative mt-2 max-w-xl text-sm text-ink-900/80 sm:text-base">
+          {t('MauriFood réunit les restaurants de la ville en un seul endroit : parcourez les menus, commandez en quelques clics, puis faites-vous livrer ou retirez votre commande sur place.')}
+        </p>
+        <ul className="relative mt-4 flex flex-wrap gap-2">
+          {HIGHLIGHTS.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="flex items-center gap-1.5 rounded-full bg-white/30 px-3 py-1 text-xs font-semibold text-ink-900"
+            >
+              <Icon size={14} />
+              {t(label)}
+            </li>
+          ))}
+        </ul>
+        <div className="relative mt-5 flex flex-wrap gap-2">
+          <a
+            href="#plats"
+            className="rounded-full bg-ink-900 px-5 py-2 text-sm font-bold text-white transition hover:bg-ink-700"
+          >
+            {t('Commander')}
+          </a>
+          <Link
+            to="/restaurants"
+            className="rounded-full bg-white/80 px-5 py-2 text-sm font-bold text-ink-900 transition hover:bg-white"
+          >
+            {t('Voir les restaurants')}
+          </Link>
+        </div>
       </div>
 
       {/* Categories */}
@@ -125,7 +158,7 @@ export default function HomePage() {
       )}
 
       {/* Popular food */}
-      <div>
+      <div id="plats" className="scroll-mt-24">
         <h3 className="mb-4 text-lg font-extrabold text-ink-900">{t('Plats populaires')}</h3>
 
         {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
@@ -140,6 +173,8 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+
+      <ReviewsCarousel />
     </div>
   )
 }

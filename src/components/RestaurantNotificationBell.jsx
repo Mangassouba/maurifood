@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, ClipboardList, CreditCard } from 'lucide-react'
+import { Bell, ClipboardList, CreditCard, Star } from 'lucide-react'
 import api from '../api/client'
 import { getLocale, t } from '../i18n'
 
@@ -93,7 +93,7 @@ export default function RestaurantNotificationBell() {
           )}
           <div className="flex max-h-80 flex-col gap-1 overflow-y-auto">
             {notifications.map((n) => {
-              const Icon = n.type.startsWith('subscription') ? CreditCard : ClipboardList
+              const Icon = n.type.startsWith('subscription') ? CreditCard : n.type.startsWith('review') ? Star : ClipboardList
               return (
                 <button
                   key={n.id}

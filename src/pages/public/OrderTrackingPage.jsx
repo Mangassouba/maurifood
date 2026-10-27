@@ -4,6 +4,7 @@ import { Check, Download } from 'lucide-react'
 import api from '../../api/client'
 import { statusLabel } from '../../lib/orderStatus'
 import { downloadReceiptPdf } from '../../lib/receiptPdf'
+import OrderReviewForm from '../../components/OrderReviewForm'
 import { btnGhost, cardClass } from '../../styles/ui'
 import { t } from '../../i18n'
 
@@ -59,6 +60,8 @@ export default function OrderTrackingPage() {
         <Download className="h-4 w-4" />
         {t('Télécharger le reçu (PDF)')}
       </button>
+
+      <OrderReviewForm order={order} onReviewed={(review) => setOrder({ ...order, review })} />
 
       <div className={`${cardClass} mb-4`}>
         <p className="mb-3 text-sm font-bold text-ink-900">{t('Vos informations')}</p>

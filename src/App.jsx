@@ -8,6 +8,7 @@ import AdminLayout from './pages/admin/AdminLayout'
 import AdminHome from './pages/admin/AdminHome'
 import RestaurantsPage from './pages/admin/RestaurantsPage'
 import ActivityLogPage from './pages/admin/ActivityLogPage'
+import ReviewsPage from './pages/admin/ReviewsPage'
 import DashboardLayout from './pages/dashboard/DashboardLayout'
 import DashboardHome from './pages/dashboard/DashboardHome'
 import DeliveryPage from './pages/dashboard/DeliveryPage'
@@ -75,6 +76,7 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminHome />} />
               <Route path="restaurants" element={<RestaurantsPage />} />
+              <Route path="avis" element={<ReviewsPage />} />
               <Route path="activite" element={<ActivityLogPage />} />
             </Route>
           </Route>

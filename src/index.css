@@ -37,3 +37,39 @@ body {
 html[lang='ar'] body {
   font-family: "Cairo", var(--font-sans);
 }
+
+/* Carrousel d'avis : la piste contient la liste en double, on la décale de la moitié
+   pour boucler sans saut. En arabe la piste démarre à droite, donc on défile dans l'autre sens. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-rtl {
+  to {
+    transform: translateX(50%);
+  }
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+}
+[dir='rtl'] .marquee-track {
+  animation-name: marquee-rtl;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee-track {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-copy {
+    display: none;
+  }
+}
