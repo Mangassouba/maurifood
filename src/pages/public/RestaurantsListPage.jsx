@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Phone } from 'lucide-react'
+import { MapPin, Phone, Search } from 'lucide-react'
 import api from '../../api/client'
 import { t } from '../../i18n'
 
 export default function RestaurantsListPage() {
   const [restaurants, setRestaurants] = useState([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     api
@@ -16,10 +17,39 @@ export default function RestaurantsListPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  // Recherche sur le nom, la description et l'adresse (quartier)
+  const filteredRestaurants = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return restaurants
+    return restaurants.filter((restaurant) =>
+      `${restaurant.name} ${restaurant.description ?? ''} ${restaurant.address ?? ''}`
+        .toLowerCase()
+        .includes(term),
+    )
+  }, [restaurants, search])
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Restaurants')}</h1>
-      <p className="mb-6 text-sm text-ink-400">{t('Choisissez un restaurant pour voir son menu.')}</p>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="mb-1 text-2xl font-extrabold text-ink-900">{t('Restaurants')}</h1>
+          <p className="text-sm text-ink-400">{t('Choisissez un restaurant pour voir son menu.')}</p>
+        </div>
+
+        {restaurants.length > 0 && (
+          <div className="relative shrink-0 sm:w-72">
+            <Search className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('Rechercher un restaurant...')}
+              aria-label={t('Rechercher un restaurant...')}
+              className="w-full rounded-full border border-ink-100 bg-white py-2 ps-10 pe-4 text-sm shadow-sm outline-none focus:ring-2 focus:ring-brand-300"
+            />
+          </div>
+        )}
+      </div>
 
       {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
 
@@ -27,8 +57,12 @@ export default function RestaurantsListPage() {
         <p className="text-ink-400">{t('Aucun restaurant disponible pour le moment.')}</p>
       )}
 
+      {restaurants.length > 0 && filteredRestaurants.length === 0 && (
+        <p className="text-ink-400">{t('Aucun restaurant ne correspond à votre recherche.')}</p>
+      )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {restaurants.map((restaurant) => (
+        {filteredRestaurants.map((restaurant) => (
           <Link
             key={restaurant.id}
             to={`/restaurants/${restaurant.slug}`}

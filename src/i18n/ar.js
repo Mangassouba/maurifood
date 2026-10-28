@@ -187,7 +187,7 @@ export default {
   'Le client vous présente un code du type': 'يُظهر لك الزبون رمزًا من نوع',
   'Le fichier doit être une image': 'يجب أن يكون الملف صورة',
   'Les dates actuelles sont conservées (fin le {date}).': 'يتم الاحتفاظ بالتواريخ الحالية (تنتهي في {date}).',
-  'Les restaurants de Nouakchott, à portée de main': 'مطاعم نواكشوط في متناول يدك',
+  'Les restaurants de Mauritanie, à portée de main': 'مطاعم موريتانيا في متناول يدك',
   Livraison: 'التوصيل',
   'Livraison ou retrait': 'توصيل أو استلام',
   Livreur: 'الموصّل',

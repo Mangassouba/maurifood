@@ -187,7 +187,7 @@ export default {
   'Le client vous présente un code du type': 'The customer shows you a code like',
   'Le fichier doit être une image': 'The file must be an image',
   'Les dates actuelles sont conservées (fin le {date}).': 'Current dates are kept (ends on {date}).',
-  'Les restaurants de Nouakchott, à portée de main': "Nouakchott's restaurants, at your fingertips",
+  'Les restaurants de Mauritanie, à portée de main': "Mauritania's restaurants, at your fingertips",
   Livraison: 'Delivery',
   'Livraison ou retrait': 'Delivery or pickup',
   Livreur: 'Driver',

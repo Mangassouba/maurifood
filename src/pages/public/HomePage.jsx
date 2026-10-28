@@ -91,7 +91,7 @@ export default function HomePage() {
           {t('Commandez en ligne sur MauriFood')}
         </p>
         <h2 className="relative mt-1 max-w-lg text-2xl font-extrabold text-ink-900 sm:text-3xl">
-          {t('Les restaurants de Nouakchott, à portée de main')}
+          {t('Les restaurants de Mauritanie, à portée de main')}
         </h2>
         <p className="relative mt-2 max-w-xl text-sm text-ink-900/80 sm:text-base">
           {t('MauriFood réunit les restaurants de la ville en un seul endroit : parcourez les menus, commandez en quelques clics, puis faites-vous livrer ou retirez votre commande sur place.')}
