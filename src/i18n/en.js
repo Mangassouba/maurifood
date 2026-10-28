@@ -95,8 +95,8 @@ export default {
   'Commandes passées via la vitrine': 'Orders placed through the storefront',
   'Commandes totales': 'Total orders',
   'Commandez en ligne sur MauriFood': 'Order online on MauriFood',
-  'Commandez vos plats préférés auprès des restaurants de Nouakchott, sans compte, en quelques clics.':
-    'Order your favourite dishes from Nouakchott restaurants, no account needed, in just a few clicks.',
+  'Commandez vos plats préférés auprès des restaurants de Mauritanie, sans compte, en quelques clics.':
+    'Order your favourite dishes from restaurants across Mauritania, no account needed, in just a few clicks.',
   Confirmer: 'Confirm',
   'Confirmer la commande': 'Confirm order',
   Confirmée: 'Confirmed',
@@ -113,6 +113,7 @@ export default {
   Date: 'Date',
   'Demande en attente : {plan}': 'Pending request: {plan}',
   'Demande envoyée': 'Request sent',
+  'Compte activé': 'Account activated',
   "Demande envoyée à l'administrateur. Votre abonnement sera activé après vérification du paiement.":
     'Request sent to the administrator. Your subscription will be activated once the payment is verified.',
   'Demandes de renouvellement': 'Renewal requests',
@@ -153,7 +154,6 @@ export default {
   'Frais de livraison': 'Delivery fee',
   'Frais de livraison (MRU)': 'Delivery fee (MRU)',
   'Garder mon panier': 'Keep my cart',
-  Grand: 'Large',
   Heure: 'Time',
   'Historique conservé sur cet appareil.': 'History stored on this device.',
   'Identifiants invalides': 'Invalid credentials',
@@ -214,7 +214,6 @@ export default {
   'Monnaie à rendre : {amount} MRU': 'Change due: {amount} MRU',
   'Montant reçu (MRU)': 'Amount received (MRU)',
   'Mot de passe': 'Password',
-  Moyen: 'Medium',
   Nom: 'Name',
   'Nom complet': 'Full name',
   'Nom de la zone': 'Zone name',
@@ -244,7 +243,6 @@ export default {
   Panier: 'Cart',
   'Panier moyen': 'Average order',
   'Patientez...': 'Please wait...',
-  Petit: 'Small',
   'Plan : {plan} · Statut abo. : {status}': 'Plan: {plan} · Subscription: {status}',
   'Plan actuel : {plan}': 'Current plan: {plan}',
   Plat: 'Dish',
@@ -306,7 +304,6 @@ export default {
   'Supprimer cette zone ?': 'Delete this zone?',
   'TICKET DE CAISSE': 'SALES RECEIPT',
   TOTAL: 'TOTAL',
-  Taille: 'Size',
   Ticket: 'Ticket',
   Total: 'Total',
   "Touchez un plat pour l'ajouter au ticket.": 'Tap a dish to add it to the ticket.',
@@ -356,8 +353,8 @@ export default {
     'Your subscription expires in {n} day. Renew it to keep your restaurant active.',
   'Votre abonnement expire dans {n} jours. Renouvelez-le pour éviter la désactivation de votre restaurant.':
     'Your subscription expires in {n} days. Renew it to keep your restaurant active.',
-  'Votre compte a été créé. Pour activer votre restaurant, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via':
-    'Your account has been created. To activate your restaurant, choose a plan (1, 3, 6 or 12 months from 1,500 MRU/month) and send the payment via',
+  'Votre restaurant est actif avec un essai gratuit de 15 jours. Pour continuer après l’essai, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via':
+    'Your restaurant is live with a 15-day free trial. To continue after the trial, choose a plan (1, 3, 6 or 12 months from 1,500 MRU/month) and send the payment via',
   'Votre nom': 'Your name',
   'Votre panier': 'Your cart',
   'Votre panier contient des plats de {restaurant}. Pour ajouter « {dish} », il faut vider le panier.':

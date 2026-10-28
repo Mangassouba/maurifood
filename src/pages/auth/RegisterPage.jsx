@@ -38,9 +38,9 @@ export default function RegisterPage() {
         <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-100">
           <Check className="h-7 w-7 text-brand-700" />
         </span>
-        <h1 className="mb-2 text-xl font-extrabold text-ink-900">{t('Demande envoyée')}</h1>
+        <h1 className="mb-2 text-xl font-extrabold text-ink-900">{t('Compte activé')}</h1>
         <p className="text-sm text-ink-500">
-          {t('Votre compte a été créé. Pour activer votre restaurant, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via')}{' '}
+          {t('Votre restaurant est actif avec un essai gratuit de 15 jours. Pour continuer après l’essai, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via')}{' '}
           <strong className="text-ink-900">Bankily</strong> {t('ou')}{' '}
           <strong className="text-ink-900">Masrivi</strong> {t('au numéro')}{' '}
           <strong className="text-ink-900">44896920</strong>{t(", puis contactez l'administrateur.")}

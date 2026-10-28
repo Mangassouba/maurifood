@@ -21,10 +21,10 @@ export default function Footer() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
               <UtensilsCrossed className="h-5 w-5 text-ink-900" />
             </span>
-            <span className="text-lg font-extrabold tracking-tight">MauriFood</span>
+            <span className="text-lg font-extrabold tracking-tight">Mauri<span className="text-brand-500">Food</span></span>
           </Link>
           <p className="mt-3 text-sm text-white/60">
-            {t('Commandez vos plats préférés auprès des restaurants de Nouakchott, sans compte, en quelques clics.')}
+            {t('Commandez vos plats préférés auprès des restaurants de Mauritanie, sans compte, en quelques clics.')}
           </p>
         </div>
 

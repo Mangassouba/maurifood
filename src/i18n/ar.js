@@ -95,8 +95,8 @@ export default {
   'Commandes passées via la vitrine': 'الطلبات المقدَّمة عبر الواجهة',
   'Commandes totales': 'إجمالي الطلبات',
   'Commandez en ligne sur MauriFood': 'اطلب عبر الإنترنت على MauriFood',
-  'Commandez vos plats préférés auprès des restaurants de Nouakchott, sans compte, en quelques clics.':
-    'اطلب أطباقك المفضلة من مطاعم نواكشوط، دون حساب، وببضع نقرات.',
+  'Commandez vos plats préférés auprès des restaurants de Mauritanie, sans compte, en quelques clics.':
+    'اطلب أطباقك المفضلة من مطاعم موريتانيا، دون حساب، وببضع نقرات.',
   Confirmer: 'تأكيد',
   'Confirmer la commande': 'تأكيد الطلب',
   Confirmée: 'مؤكَّدة',
@@ -113,6 +113,7 @@ export default {
   Date: 'التاريخ',
   'Demande en attente : {plan}': 'طلب قيد الانتظار: {plan}',
   'Demande envoyée': 'تم إرسال الطلب',
+  'Compte activé': 'تم تفعيل الحساب',
   "Demande envoyée à l'administrateur. Votre abonnement sera activé après vérification du paiement.":
     'تم إرسال الطلب إلى المسؤول. سيُفعَّل اشتراكك بعد التحقق من الدفع.',
   'Demandes de renouvellement': 'طلبات التجديد',
@@ -153,7 +154,6 @@ export default {
   'Frais de livraison': 'رسوم التوصيل',
   'Frais de livraison (MRU)': 'رسوم التوصيل (MRU)',
   'Garder mon panier': 'الاحتفاظ بسلتي',
-  Grand: 'كبير',
   Heure: 'الساعة',
   'Historique conservé sur cet appareil.': 'السجل محفوظ على هذا الجهاز.',
   'Identifiants invalides': 'بيانات الدخول غير صحيحة',
@@ -214,7 +214,6 @@ export default {
   'Monnaie à rendre : {amount} MRU': 'الباقي للزبون: {amount} MRU',
   'Montant reçu (MRU)': 'المبلغ المستلم (MRU)',
   'Mot de passe': 'كلمة المرور',
-  Moyen: 'متوسط',
   Nom: 'الاسم',
   'Nom complet': 'الاسم الكامل',
   'Nom de la zone': 'اسم المنطقة',
@@ -244,7 +243,6 @@ export default {
   Panier: 'السلة',
   'Panier moyen': 'متوسط قيمة الطلب',
   'Patientez...': 'يرجى الانتظار...',
-  Petit: 'صغير',
   'Plan : {plan} · Statut abo. : {status}': 'الباقة: {plan} · حالة الاشتراك: {status}',
   'Plan actuel : {plan}': 'الباقة الحالية: {plan}',
   Plat: 'الطبق',
@@ -306,7 +304,6 @@ export default {
   'Supprimer cette zone ?': 'حذف هذه المنطقة؟',
   'TICKET DE CAISSE': 'إيصال الصندوق',
   TOTAL: 'المجموع',
-  Taille: 'الحجم',
   Ticket: 'التذكرة',
   Total: 'المجموع',
   "Touchez un plat pour l'ajouter au ticket.": 'المس طبقًا لإضافته إلى التذكرة.',
@@ -356,8 +353,8 @@ export default {
     'ينتهي اشتراكك خلال يوم واحد. جدّده لتجنّب تعطيل مطعمك.',
   'Votre abonnement expire dans {n} jours. Renouvelez-le pour éviter la désactivation de votre restaurant.':
     'ينتهي اشتراكك خلال {n} أيام. جدّده لتجنّب تعطيل مطعمك.',
-  'Votre compte a été créé. Pour activer votre restaurant, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via':
-    'تم إنشاء حسابك. لتفعيل مطعمك، اختر باقة (1 أو 3 أو 6 أو 12 شهرًا ابتداءً من 1500 MRU/شهر) وأرسل الدفع عبر',
+  'Votre restaurant est actif avec un essai gratuit de 15 jours. Pour continuer après l’essai, choisissez une formule (1, 3, 6 ou 12 mois à partir de 1 500 MRU/mois) et envoyez le paiement via':
+    'مطعمك مفعّل مع فترة تجريبية مجانية لمدة 15 يومًا. للاستمرار بعد الفترة التجريبية، اختر باقة (1 أو 3 أو 6 أو 12 شهرًا ابتداءً من 1500 MRU/شهر) وأرسل الدفع عبر',
   'Votre nom': 'اسمك',
   'Votre panier': 'سلتك',
   'Votre panier contient des plats de {restaurant}. Pour ajouter « {dish} », il faut vider le panier.':

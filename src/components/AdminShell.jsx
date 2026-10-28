@@ -59,7 +59,7 @@ export default function AdminShell({ sectionLabel, links, banner }) {
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500">
             <UtensilsCrossed className="h-5 w-5 text-ink-900" />
           </span>
-          <span className={`text-lg font-extrabold tracking-tight ${labelClass}`}>MauriFood</span>
+          <span className={`text-lg font-extrabold tracking-tight ${labelClass}`}>Mauri<span className="text-brand-500">Food</span></span>
         </Link>
 
         <p className={`px-5 pb-2 pt-2 text-xs font-bold uppercase tracking-wide text-white/40 ${labelClass}`}>

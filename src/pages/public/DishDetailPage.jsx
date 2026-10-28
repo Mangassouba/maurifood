@@ -6,12 +6,6 @@ import DishImage from '../../components/DishImage'
 import QuantityStepper from '../../components/QuantityStepper'
 import { t } from '../../i18n'
 
-const SIZES = [
-  { id: 'small', label: 'Petit', factor: 0.85 },
-  { id: 'medium', label: 'Moyen', factor: 1 },
-  { id: 'big', label: 'Grand', factor: 1.15 },
-]
-
 export default function DishDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -20,13 +14,11 @@ export default function DishDetailPage() {
   const [dish, setDish] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [qty, setQty] = useState(1)
-  const [size, setSize] = useState('medium')
 
   useEffect(() => {
     setDish(null)
     setNotFound(false)
     setQty(1)
-    setSize('medium')
     api
       .get(`/public/dishes/${id}`)
       .then(({ data }) => setDish(data))
@@ -45,8 +37,7 @@ export default function DishDetailPage() {
     return <div className="mx-auto max-w-3xl px-6 py-16 text-center text-ink-400">{t('Chargement...')}</div>
   }
 
-  const selectedFactor = SIZES.find((s) => s.id === size)?.factor ?? 1
-  const unitPrice = Math.round(Number(dish.price) * selectedFactor)
+  const unitPrice = Number(dish.price)
   const total = unitPrice * qty
 
   function handleAdd() {
@@ -101,26 +92,6 @@ export default function DishDetailPage() {
           <p className="text-sm leading-relaxed text-ink-500">{dish.description}</p>
         </div>
       )}
-
-      <div className="mt-6">
-        <h2 className="mb-2 text-sm font-bold text-ink-900">{t('Taille')}</h2>
-        <div className="flex gap-2">
-          {SIZES.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => setSize(s.id)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                size === s.id
-                  ? 'border-brand-500 bg-brand-50 text-brand-700'
-                  : 'border-ink-100 text-ink-600'
-              }`}
-            >
-              {t(s.label)}
-            </button>
-          ))}
-        </div>
-      </div>
 
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-ink-100 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
