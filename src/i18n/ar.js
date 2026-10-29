@@ -189,6 +189,7 @@ export default {
   'Les dates actuelles sont conservées (fin le {date}).': 'يتم الاحتفاظ بالتواريخ الحالية (تنتهي في {date}).',
   'Les restaurants de Mauritanie, à portée de main': 'مطاعم موريتانيا في متناول يدك',
   Livraison: 'التوصيل',
+  'Livraison disponible': 'التوصيل متاح',
   'Livraison ou retrait': 'توصيل أو استلام',
   Livreur: 'الموصّل',
   Livreurs: 'الموصّلون',
@@ -400,6 +401,8 @@ export default {
   '« {name} » sera retiré de votre menu. Cette action est définitive.':
     'ستتم إزالة «{name}» من قائمتك. هذا الإجراء نهائي.',
   'À emporter': 'للاستلام',
+  'À emporter uniquement': 'للاستلام فقط',
+  'À emporter uniquement — pas de livraison': 'للاستلام فقط — لا يوجد توصيل',
   "À l'essai": 'تجريبي',
   'À propos du plat': 'عن الطبق',
   "Échec de l'envoi de l'image": 'فشل رفع الصورة',

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Search } from 'lucide-react'
+import { MapPin, Phone, Search, ShoppingBag, Truck } from 'lucide-react'
 import api from '../../api/client'
 import { t } from '../../i18n'
 
@@ -97,11 +97,22 @@ export default function RestaurantsListPage() {
                   <Phone className="h-3.5 w-3.5 shrink-0" /> {restaurant.phone}
                 </p>
               )}
-              <p className="mt-1 text-xs font-semibold text-brand-600">
-                {restaurant.dishCount > 1
-                  ? t('{n} plats', { n: restaurant.dishCount })
-                  : t('{n} plat', { n: restaurant.dishCount })}
-              </p>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-brand-600">
+                  {restaurant.dishCount > 1
+                    ? t('{n} plats', { n: restaurant.dishCount })
+                    : t('{n} plat', { n: restaurant.dishCount })}
+                </span>
+                {restaurant.offersDelivery ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+                    <Truck className="h-3 w-3" /> {t('Livraison disponible')}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-ink-50 px-2 py-0.5 text-xs font-semibold text-ink-500">
+                    <ShoppingBag className="h-3 w-3" /> {t('À emporter uniquement')}
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
         ))}

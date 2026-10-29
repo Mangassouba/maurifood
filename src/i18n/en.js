@@ -189,6 +189,7 @@ export default {
   'Les dates actuelles sont conservées (fin le {date}).': 'Current dates are kept (ends on {date}).',
   'Les restaurants de Mauritanie, à portée de main': "Mauritania's restaurants, at your fingertips",
   Livraison: 'Delivery',
+  'Livraison disponible': 'Delivery available',
   'Livraison ou retrait': 'Delivery or pickup',
   Livreur: 'Driver',
   Livreurs: 'Drivers',
@@ -400,6 +401,8 @@ export default {
   '« {name} » sera retiré de votre menu. Cette action est définitive.':
     '“{name}” will be removed from your menu. This cannot be undone.',
   'À emporter': 'Pickup',
+  'À emporter uniquement': 'Pickup only',
+  'À emporter uniquement — pas de livraison': 'Pickup only — no delivery',
   "À l'essai": 'Trial',
   'À propos du plat': 'About this dish',
   "Échec de l'envoi de l'image": 'Image upload failed',

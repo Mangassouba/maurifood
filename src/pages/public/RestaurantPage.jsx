@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { MapPin, Phone, Search } from 'lucide-react'
+import { MapPin, Phone, Search, ShoppingBag, Truck } from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
@@ -121,6 +121,16 @@ export default function RestaurantPage() {
                 </span>
               )}
             </p>
+          )}
+          {/* Le client sait dès le menu s'il pourra se faire livrer */}
+          {restaurant.offersDelivery ? (
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/15 px-3 py-1 text-xs font-semibold text-green-300">
+              <Truck className="h-3.5 w-3.5" /> {t('Livraison disponible')}
+            </span>
+          ) : (
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
+              <ShoppingBag className="h-3.5 w-3.5" /> {t('À emporter uniquement — pas de livraison')}
+            </span>
           )}
         </div>
       </div>
