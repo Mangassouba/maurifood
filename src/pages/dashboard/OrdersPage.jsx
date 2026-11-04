@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CircleCheck, RotateCw, Search } from 'lucide-react'
+import { CircleCheck, MessageCircle, Navigation, RotateCw, Search } from 'lucide-react'
 import api from '../../api/client'
 import Modal from '../../components/Modal'
 import Pagination from '../../components/Pagination'
+import { directionsUrl, whatsappUrl } from '../../lib/maps'
 import {
   FINAL_STATUSES,
   STATUS_FLOW,
@@ -64,6 +65,22 @@ function formatDate(value) {
 
 function itemCount(order) {
   return order.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0
+}
+
+function hasLocation(order) {
+  return order.deliveryLat != null && order.deliveryLng != null
+}
+
+function driverMessage(order) {
+  return [
+    t('Commande {code}', { code: order.code }),
+    `${t('Client')} : ${order.guestName} — ${order.guestPhone}`,
+    `${t('Adresse')} : ${order.guestAddress}`,
+    `${t('Total')} : ${Number(order.total)} MRU`,
+    hasLocation(order)
+      ? `${t('Itinéraire')} : ${directionsUrl(order.deliveryLat, order.deliveryLng)}`
+      : t('Position GPS non partagée : appelez le client.'),
+  ].join('\n')
 }
 
 export default function OrdersPage() {
@@ -367,6 +384,35 @@ export default function OrdersPage() {
                 <p className="text-sm text-ink-500">{detailsOrder.guestAddress}</p>
               )}
             </div>
+
+            {detailsOrder.orderType === 'delivery' && (
+              <div className="flex flex-wrap items-center gap-2">
+                {hasLocation(detailsOrder) ? (
+                  <a
+                    href={directionsUrl(detailsOrder.deliveryLat, detailsOrder.deliveryLng)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={btnAdvance}
+                  >
+                    <Navigation className="h-4 w-4" /> {t('Itinéraire')}
+                  </a>
+                ) : (
+                  <p className="text-xs text-brand-700">
+                    {t('Position GPS non partagée : appelez le client.')}
+                  </p>
+                )}
+                {detailsOrder.driver?.phone && (
+                  <a
+                    href={whatsappUrl(detailsOrder.driver.phone, driverMessage(detailsOrder))}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={btnValidate}
+                  >
+                    <MessageCircle className="h-4 w-4" /> {t('Envoyer au livreur')}
+                  </a>
+                )}
+              </div>
+            )}
 
             {detailsOrder.orderType === 'delivery' && (
               <div>

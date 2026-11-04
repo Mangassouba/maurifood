@@ -438,4 +438,12 @@ export default {
   // Pied de page
   Contact: 'Contact',
   'Nouakchott, Mauritanie': 'Nouakchott, Mauritania',
+  // Position de livraison
+  'Envoyer au livreur': 'Send to driver',
+  'Facultatif : le livreur vous trouvera plus vite. Faites-le depuis le lieu de livraison.': 'Optional: helps the driver find you faster. Do this from the delivery location.',
+  'Itinéraire': 'Directions',
+  'Partager ma position': 'Share my location',
+  'Position enregistrée': 'Location saved',
+  'Position GPS non partagée : appelez le client.': 'GPS location not shared: call the customer.',
+  'Vérifier sur la carte': 'Check on the map',
 }

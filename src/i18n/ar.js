@@ -438,4 +438,12 @@ export default {
   // Pied de page
   Contact: 'اتصل بنا',
   'Nouakchott, Mauritanie': 'نواكشوط، موريتانيا',
+  // Position de livraison
+  'Envoyer au livreur': 'إرسال إلى الموصّل',
+  'Facultatif : le livreur vous trouvera plus vite. Faites-le depuis le lieu de livraison.': 'اختياري: يساعد الموصّل على الوصول إليك أسرع. قم بذلك من مكان التوصيل.',
+  'Itinéraire': 'الاتجاهات',
+  'Partager ma position': 'مشاركة موقعي',
+  'Position enregistrée': 'تم حفظ الموقع',
+  'Position GPS non partagée : appelez le client.': 'لم تتم مشاركة الموقع: اتصل بالزبون.',
+  'Vérifier sur la carte': 'التحقق على الخريطة',
 }

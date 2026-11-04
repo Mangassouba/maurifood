@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { MapPin } from 'lucide-react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import ConfirmModal from '../../components/ConfirmModal'
 import { useCart } from '../../context/CartContext'
+import { mapUrl } from '../../lib/maps'
 import { addOrderToHistory } from '../../lib/orderHistory'
 import { btnGhost, btnPrimary, cardClass, inputClass } from '../../styles/ui'
 import api from '../../api/client'
@@ -15,6 +17,9 @@ export default function CheckoutPage() {
   const [guestName, setGuestName] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
   const [guestAddress, setGuestAddress] = useState('')
+  const [location, setLocation] = useState(null)
+  const [locating, setLocating] = useState(false)
+  const [locationError, setLocationError] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -39,6 +44,26 @@ export default function CheckoutPage() {
     return <Navigate to="/" replace />
   }
 
+  function shareLocation() {
+    setLocationError('')
+    if (!navigator.geolocation) {
+      setLocationError(t("La géolocalisation n'est pas disponible sur cet appareil"))
+      return
+    }
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLocation({ lat: coords.latitude, lng: coords.longitude })
+        setLocating(false)
+      },
+      () => {
+        setLocationError(t('Impossible de récupérer votre position'))
+        setLocating(false)
+      },
+      { enableHighAccuracy: true, timeout: 15000 },
+    )
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
@@ -60,6 +85,8 @@ export default function CheckoutPage() {
         guestName,
         guestPhone,
         guestAddress: effectiveOrderType === 'delivery' ? guestAddress : undefined,
+        deliveryLat: effectiveOrderType === 'delivery' ? location?.lat : undefined,
+        deliveryLng: effectiveOrderType === 'delivery' ? location?.lng : undefined,
         items: cart.items.map((i) => ({ dishId: i.dishId, quantity: i.quantity })),
       })
 
@@ -144,13 +171,55 @@ export default function CheckoutPage() {
             required
           />
           {effectiveOrderType === 'delivery' && (
-            <textarea
-              placeholder={t('Adresse de livraison')}
-              value={guestAddress}
-              onChange={(e) => setGuestAddress(e.target.value)}
-              className={inputClass}
-              required
-            />
+            <>
+              <textarea
+                placeholder={t('Adresse de livraison')}
+                value={guestAddress}
+                onChange={(e) => setGuestAddress(e.target.value)}
+                className={inputClass}
+                required
+              />
+              {location ? (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm">
+                  <MapPin className="h-4 w-4 shrink-0 text-green-700" />
+                  <span className="flex-1 font-semibold text-green-700">{t('Position enregistrée')}</span>
+                  <a
+                    href={mapUrl(location.lat, location.lng)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold text-ink-600 underline"
+                  >
+                    {t('Vérifier sur la carte')}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setLocation(null)}
+                    className="font-semibold text-ink-500"
+                  >
+                    {t('Retirer')}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={shareLocation}
+                  disabled={locating}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-ink-100 px-4 py-2.5 text-sm font-bold text-ink-900 transition hover:bg-ink-50 disabled:opacity-50"
+                >
+                  <MapPin className="h-4 w-4" />
+                  {locating ? t('Localisation...') : t('Partager ma position')}
+                </button>
+              )}
+              {locationError ? (
+                <p className="text-xs text-red-600">{locationError}</p>
+              ) : (
+                !location && (
+                  <p className="text-xs text-ink-400">
+                    {t('Facultatif : le livreur vous trouvera plus vite. Faites-le depuis le lieu de livraison.')}
+                  </p>
+                )
+              )}
+            </>
           )}
         </div>
 
