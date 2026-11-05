@@ -233,8 +233,13 @@ export default function CheckoutPage() {
         {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex items-center gap-3">
-          <button type="submit" disabled={loading} className={`${btnPrimary} flex-1`}>
-            {loading ? t('Envoi...') : t('Confirmer la commande')}
+          {/* Attendre la position : sinon la commande part sans coordonnées GPS */}
+          <button type="submit" disabled={loading || locating} className={`${btnPrimary} flex-1`}>
+            {loading
+              ? t('Envoi...')
+              : locating
+                ? t('Localisation...')
+                : t('Confirmer la commande')}
           </button>
           <button type="button" onClick={() => setConfirmCancel(true)} className={btnGhost}>
             {t('Annuler')}
