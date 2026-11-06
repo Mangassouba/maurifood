@@ -315,6 +315,7 @@ export default {
   'Tous les statuts': 'كل الحالات',
   'Tous les types': 'كل الأنواع',
   Tout: 'الكل',
+  'Tous les restaurants': 'كل المطاعم',
   'Tout marquer comme lu': 'تحديد الكل كمقروء',
   'Toutes disponibilités': 'كل حالات التوفر',
   'Toutes les catégories': 'كل الفئات',

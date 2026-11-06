@@ -1,6 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Banknote, Clock, ShoppingBag, Truck } from 'lucide-react'
+import {
+  Banknote,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  ShoppingBag,
+  Store,
+  Truck,
+} from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
@@ -15,11 +24,106 @@ const HIGHLIGHTS = [
   { icon: Clock, label: 'Suivi avec votre code' },
 ]
 
+const PAGE_SIZE = 12
+
+function FilterChip({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition ${
+        active ? 'bg-ink-900 text-white' : 'text-ink-500 hover:bg-ink-100 hover:text-ink-900'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
+
+function RestaurantSelect({ restaurants, value, onChange }) {
+  return (
+    <div className="relative w-full sm:w-64">
+      <Store
+        size={16}
+        className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+      />
+      <select
+        aria-label={t('Restaurants')}
+        value={value}
+        onChange={(e) => onChange(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+        className="w-full cursor-pointer appearance-none rounded-xl border border-ink-100 bg-white py-2.5 ps-10 pe-9 text-sm font-semibold text-ink-900 shadow-sm outline-none focus:ring-2 focus:ring-brand-300"
+      >
+        <option value="all">{t('Tous les restaurants')}</option>
+        {restaurants.map((restaurant) => (
+          <option key={restaurant.id} value={restaurant.id}>
+            {restaurant.name}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        size={16}
+        className="pointer-events-none absolute end-3.5 top-1/2 -translate-y-1/2 text-ink-400"
+      />
+    </div>
+  )
+}
+
+function PageNumbers({ page, pageCount, onPageChange }) {
+  if (pageCount <= 1) return null
+
+  const pages = []
+  for (let n = 1; n <= pageCount; n += 1) {
+    if (pageCount <= 7 || n === 1 || n === pageCount || Math.abs(n - page) <= 1) pages.push(n)
+  }
+  const arrowClass =
+    'flex h-10 w-10 items-center justify-center rounded-full text-ink-600 transition hover:bg-ink-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+
+  return (
+    <nav className="mt-8 flex items-center justify-center gap-1">
+      <button
+        type="button"
+        aria-label={t('Précédent')}
+        disabled={page === 1}
+        onClick={() => onPageChange(page - 1)}
+        className={arrowClass}
+      >
+        <ChevronLeft size={18} className="rtl:rotate-180" />
+      </button>
+      {pages.map((n, index) => (
+        <Fragment key={n}>
+          {index > 0 && n - pages[index - 1] > 1 && <span className="px-1 text-ink-400">…</span>}
+          <button
+            type="button"
+            aria-current={n === page ? 'page' : undefined}
+            onClick={() => onPageChange(n)}
+            className={`h-10 w-10 rounded-full text-sm font-bold transition ${
+              n === page ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'
+            }`}
+          >
+            {n}
+          </button>
+        </Fragment>
+      ))}
+      <button
+        type="button"
+        aria-label={t('Suivant')}
+        disabled={page === pageCount}
+        onClick={() => onPageChange(page + 1)}
+        className={arrowClass}
+      >
+        <ChevronRight size={18} className="rtl:rotate-180" />
+      </button>
+    </nav>
+  )
+}
+
 export default function HomePage() {
   const [dishes, setDishes] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [activeRestaurant, setActiveRestaurant] = useState('all')
   const [activeCategory, setActiveCategory] = useState('all')
+  const [page, setPage] = useState(1)
   const { addItem } = useCart()
 
   useEffect(() => {
@@ -30,21 +134,54 @@ export default function HomePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const restaurants = useMemo(() => {
+    const map = new Map()
+    for (const dish of dishes) {
+      if (dish.restaurant) map.set(dish.restaurantId, dish.restaurant.name)
+    }
+    return Array.from(map, ([id, name]) => ({ id, name })).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    )
+  }, [dishes])
+
   const categories = useMemo(() => {
     const map = new Map()
     for (const dish of dishes) {
-      if (dish.category?.id) map.set(dish.category.id, dish.category.name)
+      const matchesRestaurant = activeRestaurant === 'all' || dish.restaurantId === activeRestaurant
+      if (matchesRestaurant && dish.category?.id) map.set(dish.category.id, dish.category.name)
     }
     return Array.from(map, ([id, name]) => ({ id, name }))
-  }, [dishes])
+  }, [dishes, activeRestaurant])
 
   const filteredDishes = useMemo(() => {
     return dishes.filter((dish) => {
+      const matchesRestaurant = activeRestaurant === 'all' || dish.restaurantId === activeRestaurant
       const matchesCategory = activeCategory === 'all' || dish.category?.id === activeCategory
       const matchesSearch = dish.name.toLowerCase().includes(search.trim().toLowerCase())
-      return matchesCategory && matchesSearch
+      return matchesRestaurant && matchesCategory && matchesSearch
     })
-  }, [dishes, search, activeCategory])
+  }, [dishes, search, activeRestaurant, activeCategory])
+
+  const pageCount = Math.max(1, Math.ceil(filteredDishes.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedDishes = filteredDishes.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  function selectRestaurant(id) {
+    setActiveRestaurant(id)
+    // Les catégories sont propres à chaque restaurant
+    setActiveCategory('all')
+    setPage(1)
+  }
+
+  function selectCategory(id) {
+    setActiveCategory(id)
+    setPage(1)
+  }
+
+  function changePage(nextPage) {
+    setPage(nextPage)
+    document.getElementById('plats')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   function quickAdd(dish) {
     addItem({
@@ -77,7 +214,10 @@ export default function HomePage() {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
           placeholder={t('Rechercher un plat...')}
           className="w-full rounded-2xl border border-ink-100 bg-white py-3 ps-11 pe-4 text-sm shadow-sm outline-none focus:ring-2 focus:ring-brand-300"
         />
@@ -123,43 +263,35 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Categories */}
-      {categories.length > 0 && (
-        <div className="mb-8">
-          <h3 className="mb-3 text-lg font-extrabold text-ink-900">{t('Catégories')}</h3>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            <button
-              type="button"
-              onClick={() => setActiveCategory('all')}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                activeCategory === 'all'
-                  ? 'bg-ink-900 text-white'
-                  : 'bg-white text-ink-600 border border-ink-100'
-              }`}
-            >
-              {t('Tout')}
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setActiveCategory(cat.id)}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  activeCategory === cat.id
-                    ? 'bg-ink-900 text-white'
-                    : 'bg-white text-ink-600 border border-ink-100'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Popular food */}
       <div id="plats" className="scroll-mt-24">
-        <h3 className="mb-4 text-lg font-extrabold text-ink-900">{t('Plats populaires')}</h3>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-lg font-extrabold text-ink-900">{t('Plats populaires')}</h3>
+          {restaurants.length > 1 && (
+            <RestaurantSelect
+              restaurants={restaurants}
+              value={activeRestaurant}
+              onChange={selectRestaurant}
+            />
+          )}
+        </div>
+
+        {categories.length > 1 && (
+          <div className="mb-5 flex gap-1 overflow-x-auto pb-1">
+            <FilterChip active={activeCategory === 'all'} onClick={() => selectCategory('all')}>
+              {t('Tout')}
+            </FilterChip>
+            {categories.map((cat) => (
+              <FilterChip
+                key={cat.id}
+                active={activeCategory === cat.id}
+                onClick={() => selectCategory(cat.id)}
+              >
+                {cat.name}
+              </FilterChip>
+            ))}
+          </div>
+        )}
 
         {loading && <p className="text-ink-400">{t('Chargement...')}</p>}
 
@@ -168,10 +300,12 @@ export default function HomePage() {
         )}
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {filteredDishes.map((dish) => (
+          {pagedDishes.map((dish) => (
             <FoodCard key={dish.id} dish={dish} onQuickAdd={quickAdd} />
           ))}
         </div>
+
+        <PageNumbers page={currentPage} pageCount={pageCount} onPageChange={changePage} />
       </div>
 
       <ReviewsCarousel />

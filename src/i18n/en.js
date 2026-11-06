@@ -315,6 +315,7 @@ export default {
   'Tous les statuts': 'All statuses',
   'Tous les types': 'All types',
   Tout: 'All',
+  'Tous les restaurants': 'All restaurants',
   'Tout marquer comme lu': 'Mark all as read',
   'Toutes disponibilités': 'All availability',
   'Toutes les catégories': 'All categories',
