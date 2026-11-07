@@ -4,7 +4,7 @@ export function mapUrl(lat, lng) {
   return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
 }
 
-// Sans point de départ, Google Maps démarre de la position actuelle du livreur
+// Sans point de départ, Google Maps démarre de la position actuelle de l'utilisateur
 export function directionsUrl(lat, lng) {
   return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
 }

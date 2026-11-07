@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { MapPin, Phone, Search, ShoppingBag, Truck } from 'lucide-react'
+import { MapPin, Navigation, Phone, Search, ShoppingBag, Truck } from 'lucide-react'
 import api from '../../api/client'
 import { useCart } from '../../context/CartContext'
 import FoodCard from '../../components/FoodCard'
 import Pagination from '../../components/Pagination'
+import { directionsUrl } from '../../lib/maps'
 import { t } from '../../i18n'
 
 const PAGE_SIZE = 12
@@ -122,16 +123,29 @@ export default function RestaurantPage() {
               )}
             </p>
           )}
-          {/* Le client sait dès le menu s'il pourra se faire livrer */}
-          {restaurant.offersDelivery ? (
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/15 px-3 py-1 text-xs font-semibold text-green-300">
-              <Truck className="h-3.5 w-3.5" /> {t('Livraison disponible')}
-            </span>
-          ) : (
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
-              <ShoppingBag className="h-3.5 w-3.5" /> {t('À emporter uniquement — pas de livraison')}
-            </span>
-          )}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {/* Le client sait dès le menu s'il pourra se faire livrer */}
+            {restaurant.offersDelivery ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/15 px-3 py-1 text-xs font-semibold text-green-300">
+                <Truck className="h-3.5 w-3.5" /> {t('Livraison disponible')}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
+                <ShoppingBag className="h-3.5 w-3.5" /> {t('À emporter uniquement — pas de livraison')}
+              </span>
+            )}
+            {/* Visible seulement si le restaurant a renseigné sa position GPS */}
+            {restaurant.lat != null && restaurant.lng != null && (
+              <a
+                href={directionsUrl(restaurant.lat, restaurant.lng)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-ink-900 transition hover:bg-brand-400"
+              >
+                <Navigation className="h-3.5 w-3.5" /> {t('Itinéraire')}
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
